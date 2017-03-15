@@ -4,23 +4,20 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour {
 
-    public float distanceAway = 5f;
-    public float distanceUp = 1.5f;
+    public float distanceAway = 3f;
+    public float distanceUp = 0.5f;
 
     private Transform target;
-    private Vector3 distanceFromTarget = new Vector3(0, 1.5f, 0);
 
     private Vector3 velocityCamSmooth = Vector3.zero;
     float camSmoothDampTime = 0.1f;
-
-    // Use this for initialization
+    
     void Start () {
-        target = GameObject.FindWithTag("Player").transform;
+        target = GameObject.FindWithTag("CameraLookTarget").transform;
 	}
 	
-	// Update is called once per frame
 	void LateUpdate () {
-        Vector3 offset = target.position + distanceFromTarget;
+        Vector3 offset = target.position + new Vector3(0, distanceUp, 0);
         Vector3 lookDir = offset - transform.position;
         lookDir.y = 0;
         lookDir.Normalize();

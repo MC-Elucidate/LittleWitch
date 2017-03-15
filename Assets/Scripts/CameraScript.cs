@@ -4,28 +4,37 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour {
 
-    public float xValue = 0;
-    public float yValue = 0;
-    public float smooth;
+    public float distanceAway = 5f;
+    public float distanceUp = 1.5f;
 
     private Transform target;
-    private Vector3 distanceFromTarget;
+    private Vector3 distanceFromTarget = new Vector3(0, 1.5f, 0);
 
-    private const float Y_MAX_ANGLE = 45.0f;
-    private const float Y_MIN_ANGLE = 0.0f;
+    private Vector3 velocityCamSmooth = Vector3.zero;
+    float camSmoothDampTime = 0.1f;
 
     // Use this for initialization
     void Start () {
-        target = transform.parent;
-        distanceFromTarget = new Vector3(0f, 0f, -5f);
+        target = GameObject.FindWithTag("Player").transform;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
-        yValue = Mathf.Clamp(yValue, Y_MIN_ANGLE, Y_MAX_ANGLE);
-        Quaternion rotation = Quaternion.Euler(yValue, xValue, 0);
-        transform.position = target.position + rotation * distanceFromTarget;
+        Vector3 offset = target.position + distanceFromTarget;
+        Vector3 lookDir = offset - transform.position;
+        lookDir.y = 0;
+        lookDir.Normalize();
+
+        Vector3 destinationPosition = offset + (target.up * distanceUp) - (lookDir * distanceAway);
+
+        smoothPosition(transform.position, destinationPosition);
         transform.LookAt(target.position);
+
 	}
+
+    private void smoothPosition(Vector3 fromPosition, Vector3 toPosition)
+    {
+        transform.position = Vector3.SmoothDamp(fromPosition, toPosition, ref velocityCamSmooth, camSmoothDampTime);
+    }
 
 }

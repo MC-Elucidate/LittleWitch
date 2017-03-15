@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovementScript : MonoBehaviour {
-    
+
     private Animator animator;
     private CharacterController characterController;
     private float directionDampTime = 0.25f;
 
     public float sidewaysInput;
     public float forwardInput;
-    public Vector3 velocity;
-    public float movespeed = 10f;
-    public float jumpPower = 10f;
-    public float gravity = -10f;
+    public float directionSpeed = 3f;
     public bool isGrounded;
     public LayerMask platformsLayer;
     public Transform cameraTransform;
@@ -22,46 +19,34 @@ public class PlayerMovementScript : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
-        velocity = new Vector3(0, 0, 0);
         animator = gameObject.GetComponent<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
         CheckIsGrounded();
 
-        
-        Vector3 directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up) * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
-        directionToMove = Vector3.ClampMagnitude(directionToMove, movespeed);
 
+        Vector3 rootDirection = transform.forward;
+        Vector3 inputDirection = new Vector3(sidewaysInput, 0, forwardInput);
+        Vector3 cameraDirection = cameraTransform.forward;
+        cameraDirection.y = 0;
+        Quaternion referentialShift = Quaternion.FromToRotation(Vector3.forward, cameraDirection);
+        Vector3 moveDirection = referentialShift * inputDirection;
+        Vector3 axisSign = Vector3.Cross(moveDirection, rootDirection);
+        float speed = inputDirection.sqrMagnitude;
+        float angleRootToMove = Vector3.Angle(rootDirection, moveDirection) * (axisSign.y >= 0 ? -1 : 1);
+        angleRootToMove /= 180f;
+        float direction = angleRootToMove * directionSpeed;
 
-        float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
         animator.SetFloat("Speed", speed);
-        animator.SetFloat("Direction", 0, directionDampTime, Time.deltaTime);
+        animator.SetFloat("Direction", direction, directionDampTime, Time.deltaTime);
 
-        if (directionToMove.magnitude != 0)
-            transform.rotation = Quaternion.LookRotation(directionToMove.normalized);
-
-
-        velocity.x = directionToMove.x;
-        velocity.z = directionToMove.z;
-
-        if (!isGrounded)
-        {
-            velocity.y += gravity * Time.deltaTime;
-        }
-        if (jump)
-        {
-            velocity.y += jumpPower;
-            jump = false;
-        }
-
-        characterController.Move(velocity * Time.deltaTime);
     }
 
     void FixedUpdate()
@@ -69,11 +54,7 @@ public class PlayerMovementScript : MonoBehaviour {
     }
 
     public void Jump()
-    {
-        if (isGrounded)
-        {
-            jump = true;
-        }
+    { 
     }
 
     private void CheckIsGrounded()
@@ -81,7 +62,6 @@ public class PlayerMovementScript : MonoBehaviour {
         if (Physics.Raycast(transform.position, -transform.up, 0.1f, platformsLayer))
         {
             isGrounded = true;
-            velocity.y = 0;
         }
         else
         {

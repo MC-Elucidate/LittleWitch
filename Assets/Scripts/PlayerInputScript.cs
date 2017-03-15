@@ -9,7 +9,7 @@ public class PlayerInputScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
-        camera = gameObject.GetComponentInChildren<CameraScript>();
+        camera = Camera.main.GetComponent<CameraScript>();
 	}
 	
 	// Update is called once per frame
@@ -17,10 +17,7 @@ public class PlayerInputScript : MonoBehaviour {
 
         playerMovement.forwardInput = Input.GetAxis("Vertical");
         playerMovement.sidewaysInput = Input.GetAxis("Horizontal");
-
-        camera.xValue += Input.GetAxis("CameraHorizontal");
-        camera.yValue += Input.GetAxis("CameraVertical");
-
+        
         if (Input.GetButtonDown("Jump"))
             playerMovement.Jump();
 

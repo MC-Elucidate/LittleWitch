@@ -8,10 +8,12 @@ public class PlayerInputScript : MonoBehaviour
     MagicManager magicManager;
     CameraScript camera;
 
-    private StringBuilder inputString;
     private const int MAX_INPUTS_LENGTH = 8;
     private const float INPUTS_CLEAR_TIME = 2.5f;
 
+    private StringBuilder inputString;
+    private Transform leftHand;
+    private Transform rightHand;
     private float lastInputTime = 0f;
 
     void Start()
@@ -20,15 +22,16 @@ public class PlayerInputScript : MonoBehaviour
         magicManager = gameObject.GetComponent<MagicManager>();
         camera = Camera.main.GetComponent<CameraScript>();
         inputString = new StringBuilder();
+
+        leftHand = this.gameObject.FindObjectInChildren("LeftHand").transform;
+        rightHand = this.gameObject.FindObjectInChildren("RightHand").transform;
     }
 
     void Update()
     {
         HandleInputs();
-        ManageInputString();
-
-        if (magicManager.Cast(inputString.ToString(), transform.position + transform.forward * 1.5f))
-            inputString.Remove(0, inputString.Length);
+        HandleSpellInputs();
+        CheckValidSpellInputs();
     }
 
     private void HandleInputs()
@@ -51,7 +54,24 @@ public class PlayerInputScript : MonoBehaviour
         }
     }
 
-    private void ManageInputString()
+    private void AddToInputString(int element)
+    {
+        lastInputTime = 0f;
+        inputString.Append(element);
+
+        if (inputString.Length >= MAX_INPUTS_LENGTH)
+            inputString.Remove(0, inputString.Length - MAX_INPUTS_LENGTH);
+
+        Debug.Log(String.Format("Element{0} Pressed! Combo now: {1}", element, inputString));
+    }
+
+    private void CheckValidSpellInputs()
+    {
+        if (magicManager.CheckValidSpellInputs(inputString.ToString(), rightHand))
+            inputString.Remove(0, inputString.Length);
+    }
+
+    private void HandleSpellInputs()
     {
         if (inputString.Length > 0)
             lastInputTime += Time.deltaTime;
@@ -64,16 +84,5 @@ public class PlayerInputScript : MonoBehaviour
             lastInputTime = 0f;
             Debug.Log("Inputs cleared! Combo is now: " + inputString);
         }
-    }
-
-    private void AddToInputString(int element)
-    {
-        lastInputTime = 0f;
-        inputString.Append(element);
-
-        if (inputString.Length >= MAX_INPUTS_LENGTH)
-            inputString.Remove(0, inputString.Length - MAX_INPUTS_LENGTH);
-
-        Debug.Log(String.Format("Element{0} Pressed! Combo now: {1}", element, inputString));
     }
 }

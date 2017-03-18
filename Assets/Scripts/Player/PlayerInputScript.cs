@@ -39,6 +39,11 @@ public class PlayerInputScript : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
             playerMovement.Jump();
 
+        if (Input.GetButtonDown("RecentreCamera"))
+            camera.RecentrePressed();
+        if (Input.GetButtonUp("RecentreCamera"))
+            camera.RecentreReleased();
+
         for (int i = 1; i <= 3; i++)
         {
             if (Input.GetButtonDown("Element" + i))

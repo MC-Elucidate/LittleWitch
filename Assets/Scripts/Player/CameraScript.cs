@@ -2,28 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-struct CameraPosition
-{
-    // Position to align camera to, probably somewhere behind the character
-    // or position to point camera at, probably somewhere along character's axis
-    private Vector3 position;
-    // Transform used for any rotation
-    private Transform xForm;
-
-    public Vector3 Position { get { return position; } set { position = value; } }
-    public Transform XForm { get { return xForm; } set { xForm = value; } }
-
-    public void Init(string camName, Vector3 pos, Transform transform, Transform parent)
-    {
-        position = pos;
-        xForm = transform;
-        xForm.name = camName;
-        xForm.parent = parent;
-        xForm.localPosition = Vector3.zero;
-        xForm.localPosition = position;
-    }
-}
-
 /// <summary>
 /// #DESCRIPTION OF CLASS#
 /// </summary>
@@ -37,11 +15,7 @@ public class CameraScript : MonoBehaviour
     [SerializeField]
     private float distanceAway;
     [SerializeField]
-    private float distanceAwayMultipler = 1.5f;
-    [SerializeField]
     private float distanceUp;
-    [SerializeField]
-    private float distanceUpMultiplier = 5f;
     [SerializeField]
     private PlayerMovementScript follow;
     [SerializeField]
@@ -51,27 +25,7 @@ public class CameraScript : MonoBehaviour
     [SerializeField]
     private float targetingTime = 0.5f;
     [SerializeField]
-    private float firstPersonLookSpeed = 3.0f;
-    [SerializeField]
-    private Vector2 firstPersonXAxisClamp = new Vector2(-70.0f, 90.0f);
-    [SerializeField]
-    private float fPSRotationDegreePerSecond = 120f;
-    [SerializeField]
-    private float firstPersonThreshold = 0.5f;
-    [SerializeField]
     private float freeThreshold = -0.1f;
-    [SerializeField]
-    private Vector2 camMinDistFromChar = new Vector2(1f, -0.5f);
-    [SerializeField]
-    private float rightStickThreshold = 0.1f;
-    [SerializeField]
-    private const float freeRotationDegreePerSecond = -5f;
-    [SerializeField]
-    private float mouseWheelSensitivity = 3.0f;
-    [SerializeField]
-    private float compensationOffset = 0.2f;
-    [SerializeField]
-    private CamStates startingState = CamStates.Free;
 
 
     // Smoothing and damping
@@ -87,17 +41,6 @@ public class CameraScript : MonoBehaviour
     private Vector3 lookDir;
     private Vector3 curLookDir;
     private CamStates camState = CamStates.Behind;
-    private float xAxisRot = 0.0f;
-    private CameraPosition firstPersonCamPos;
-    private float lookWeight;
-    private const float TARGETING_THRESHOLD = 0.01f;
-    private Vector3 savedRigToGoal;
-    private float distanceAwayFree;
-    private float distanceUpFree;
-    private Vector2 rightStickPrevFrame = Vector2.zero;
-    private float lastStickMin = float.PositiveInfinity;    // Used to prevent from zooming in when holding back on the right stick/scrollwheel
-    private Vector3 nearClipDimensions = Vector3.zero; // width, height, radius
-    private Vector3[] viewFrustum;
     private Vector3 characterOffset;
     private Vector3 targetPosition;
 
@@ -132,10 +75,8 @@ public class CameraScript : MonoBehaviour
 
     public enum CamStates
     {
-        Behind,         // Single analog stick, Japanese-style; character orbits around camera; default for games like Mario64 and 3D Zelda series
-        FirstPerson,    // Traditional 1st person look around
-        Target,         // L-targeting variation on "Behind" mode
-        Free            // High angle; character moves relative to camera facing direction
+        Behind,         // Classic 3rd person camera
+        Target,        // Used to centre camera behind character
     }
 
     public Vector3 RigToGoalDirection
@@ -161,11 +102,7 @@ public class CameraScript : MonoBehaviour
     /// </summary>
     void Start()
     {
-        cameraXform = this.transform;//.parent;
-        if (cameraXform == null)
-        {
-            Debug.LogError("Parent camera to empty GameObject.", this);
-        }
+        cameraXform = this.transform;
 
         follow = GameObject.FindWithTag("Player").GetComponent<PlayerMovementScript>();
         followXform = GameObject.FindWithTag("Player").transform;
@@ -173,23 +110,8 @@ public class CameraScript : MonoBehaviour
         lookDir = followXform.forward;
         curLookDir = followXform.forward;
 
-        // Position and parent a GameObject where first person view should be
-        firstPersonCamPos = new CameraPosition();
-        firstPersonCamPos.Init
-            (
-                "First Person Camera",
-                new Vector3(0.0f, 1.6f, 0.2f),
-                new GameObject().transform,
-                follow.transform
-            );
-
-        camState = startingState;
-
         // Intialize values to avoid having 0s
         characterOffset = followXform.position + new Vector3(0f, distanceUp, 0f);
-        distanceUpFree = distanceUp;
-        distanceAwayFree = distanceAway;
-        savedRigToGoal = RigToGoalDirection;
     }
 
     /// <summary>
@@ -200,59 +122,15 @@ public class CameraScript : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Debugging information should be put here.
-    /// </summary>
-    void OnDrawGizmos()
-    {
-        //if (EditorApplication.isPlaying && !EditorApplication.isPaused)
-        //{
-        //    DebugDraw.DrawDebugFrustum(viewFrustum);
-        //}
-    }
-
     void LateUpdate()
     {
-        //viewFrustum = DebugDraw.CalculateViewFrustum(GetComponent<Camera>(), ref nearClipDimensions);
-
-        // Pull values from controller/keyboard
-        // rightX = Input.GetAxis("RightStickX");
-        //float rightY = Input.GetAxis("RightStickY");
-        float leftX = Input.GetAxis("Horizontal");
-        float leftY = Input.GetAxis("Vertical");
-        //float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
-        //float mouseWheelScaled = mouseWheel * mouseWheelSensitivity;
-        float leftTrigger = 0;
-        //bool bButtonPressed = Input.GetButton("ExitFPV");
-        //bool qKeyDown = Input.GetKey(KeyCode.Q);
-        //bool eKeyDown = Input.GetKey(KeyCode.E);
-        bool lShiftKeyDown = Input.GetKey(KeyCode.LeftShift);
-
-        // Abstraction to set right Y when using mouse
-        if (lShiftKeyDown)
-        {
-            leftTrigger = 1;
-        }
+        float leftX = follow.sidewaysInput;
+        float leftY = follow.forwardInput;
 
         characterOffset = followXform.position + (distanceUp * followXform.up);
         Vector3 lookAt = characterOffset;
         targetPosition = Vector3.zero;
-
-        // Determine camera state
-        // * Targeting *
-        if (leftTrigger > TARGETING_THRESHOLD)
-        {
-
-            camState = CamStates.Target;
-        }
-        else
-        {
-                camState = CamStates.Behind;
-        }
-
-        // Set the Look At Weight - amount to use look at IK vs using the head's animation
-        //follow.Animator.SetLookAtWeight(lookWeight);
-
+        
         // Execute camera state
         switch (camState)
         {
@@ -278,6 +156,7 @@ public class CameraScript : MonoBehaviour
                 Debug.DrawLine(followXform.position, targetPosition, Color.magenta);
 
                 break;
+
             case CamStates.Target:
                 ResetCamera();
                 lookDir = followXform.forward;
@@ -289,13 +168,8 @@ public class CameraScript : MonoBehaviour
             
         }
 
-
-        //CompensateForWalls(characterOffset, ref targetPosition);
         SmoothPosition(cameraXform.position, targetPosition);
         transform.LookAt(lookAt);
-
-        // Make sure to cache the unscaled mouse wheel value if using mouse/keyboard instead of controller
-       // rightStickPrevFrame = new Vector2(rightX, rightY);//mouseWheel != 0 ? mouseWheelScaled : rightY);
     }
 
     #endregion
@@ -309,70 +183,21 @@ public class CameraScript : MonoBehaviour
         cameraXform.position = Vector3.SmoothDamp(fromPos, toPos, ref velocityCamSmooth, camSmoothDampTime);
     }
 
-    private void CompensateForWalls(Vector3 fromObject, ref Vector3 toTarget)
-    {
-        // Compensate for walls between camera
-        RaycastHit wallHit = new RaycastHit();
-        if (Physics.Linecast(fromObject, toTarget, out wallHit))
-        {
-            Debug.DrawRay(wallHit.point, wallHit.normal, Color.red);
-            toTarget = wallHit.point;
-        }
-
-        // Compensate for geometry intersecting with near clip plane
-        Vector3 camPosCache = GetComponent<Camera>().transform.position;
-        GetComponent<Camera>().transform.position = toTarget;
-        //viewFrustum = DebugDraw.CalculateViewFrustum(GetComponent<Camera>(), ref nearClipDimensions);
-
-        for (int i = 0; i < (viewFrustum.Length / 2); i++)
-        {
-            RaycastHit cWHit = new RaycastHit();
-            RaycastHit cCWHit = new RaycastHit();
-
-            // Cast lines in both directions around near clipping plane bounds
-            while (Physics.Linecast(viewFrustum[i], viewFrustum[(i + 1) % (viewFrustum.Length / 2)], out cWHit) ||
-                   Physics.Linecast(viewFrustum[(i + 1) % (viewFrustum.Length / 2)], viewFrustum[i], out cCWHit))
-            {
-                Vector3 normal = wallHit.normal;
-                if (wallHit.normal == Vector3.zero)
-                {
-                    // If there's no available wallHit, use normal of geometry intersected by LineCasts instead
-                    if (cWHit.normal == Vector3.zero)
-                    {
-                        if (cCWHit.normal == Vector3.zero)
-                        {
-                            Debug.LogError("No available geometry normal from near clip plane LineCasts. Something must be amuck.", this);
-                        }
-                        else
-                        {
-                            normal = cCWHit.normal;
-                        }
-                    }
-                    else
-                    {
-                        normal = cWHit.normal;
-                    }
-                }
-
-                toTarget += (compensationOffset * normal);
-                GetComponent<Camera>().transform.position += toTarget;
-
-                // Recalculate positions of near clip plane
-                //viewFrustum = DebugDraw.CalculateViewFrustum(GetComponent<Camera>(), ref nearClipDimensions);
-            }
-        }
-
-        GetComponent<Camera>().transform.position = camPosCache;
-        //viewFrustum = DebugDraw.CalculateViewFrustum(GetComponent<Camera>(), ref nearClipDimensions);
-    }
-
     /// <summary>
     /// Reset local position of camera inside of parentRig and resets character's look IK.
     /// </summary>
     private void ResetCamera()
     {
-        lookWeight = Mathf.Lerp(lookWeight, 0.0f, Time.deltaTime * firstPersonLookSpeed);
         transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, Time.deltaTime);
+    }
+
+    public void RecentrePressed()
+    {
+        camState = CamStates.Target;
+    }
+    public void RecentreReleased()
+    {
+        camState = CamStates.Behind;
     }
 
     #endregion Methods

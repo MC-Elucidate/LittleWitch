@@ -12,26 +12,28 @@ public class MagicManager : MonoBehaviour
     {
         foreach (SpellBooleanPair pair in spellList)
         {
-            if (inputString.Contains(pair.spellPrefab.GetComponent<ISpell>().inputString) && (pair.unlocked || ALL_SPELLS_UNLOCKED))
+            if (inputString.Contains(pair.spellPrefab.GetComponent<Spell>().inputString) && (pair.unlocked || ALL_SPELLS_UNLOCKED))
             {
                 readySpellPrefab = pair.spellPrefab;
-                CastSpell(targetSpawnPosition);
+                Debug.Log(String.Format("Spell {0} has been readied!", readySpellPrefab.name));
                 return true;
             }
         }
         return false;
     }
 
-    private void CastSpell(Transform targetSpawnPosition)
+    public void CastSpell(Transform targetSpawnPosition)
     {
         //Casting logic and animations go over here probably
         if (readySpellPrefab != null)
         {
+            Debug.Log(String.Format("Spell {0} has been cast!", readySpellPrefab.name));
             GameObject.Instantiate(readySpellPrefab, targetSpawnPosition.position, targetSpawnPosition.rotation);
             readySpellPrefab = null;
         }
         else
         {
+            Debug.Log("No spell is ready");
             //Play no magic spell sound
         }
     }

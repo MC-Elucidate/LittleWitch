@@ -20,12 +20,6 @@ public class CameraScript : MonoBehaviour
     private PlayerMovementScript follow;
     [SerializeField]
     private Transform followXform;
-    [SerializeField]
-    private float widescreen = 0.2f;
-    [SerializeField]
-    private float targetingTime = 0.5f;
-    [SerializeField]
-    private float freeThreshold = -0.1f;
 
 
     // Smoothing and damping
@@ -141,19 +135,19 @@ public class CameraScript : MonoBehaviour
                 if (follow.speed > follow.locomotionThreshold && follow.IsInLocomotion() && !follow.IsInPivot())
                 {
                     lookDir = Vector3.Lerp(followXform.right * (leftX < 0 ? 1f : -1f), followXform.forward * (leftY < 0 ? -1f : 1f), Mathf.Abs(Vector3.Dot(this.transform.forward, followXform.forward)));
-                    Debug.DrawRay(this.transform.position, lookDir, Color.white);
+                    
 
                     // Calculate direction from camera to player, kill Y, and normalize to give a valid direction with unit magnitude
                     curLookDir = Vector3.Normalize(characterOffset - this.transform.position);
                     curLookDir.y = 0;
-                    Debug.DrawRay(this.transform.position, curLookDir, Color.green);
+                    
 
                     // Damping makes it so we don't update targetPosition while pivoting; camera shouldn't rotate around player
                     curLookDir = Vector3.SmoothDamp(curLookDir, lookDir, ref velocityLookDir, lookDirDampTime);
                 }
 
                 targetPosition = characterOffset + followXform.up * distanceUp - Vector3.Normalize(curLookDir) * distanceAway;
-                Debug.DrawLine(followXform.position, targetPosition, Color.magenta);
+                
 
                 break;
 

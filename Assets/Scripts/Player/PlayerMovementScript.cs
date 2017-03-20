@@ -15,6 +15,7 @@ public class PlayerMovementScript : MonoBehaviour {
     private float rotationDegreesPerSecond = 120f;
     private float direction;
     private float pivotAngle;
+    private Vector3 velocity;
 
     //Public variables
     public float sidewaysInput;
@@ -22,6 +23,9 @@ public class PlayerMovementScript : MonoBehaviour {
     public float directionSpeed = 3f;
     public float speed = 0f;
     public float locomotionThreshold = 0.7f;
+    public float movespeed = 10f;
+    public float gravity = -10f;
+    public float rotationDampSpeed = 0.3f;
     public bool isGrounded;
     public LayerMask platformsLayer;
 
@@ -49,26 +53,53 @@ public class PlayerMovementScript : MonoBehaviour {
         CheckIsGrounded();
 
         //Calculate Movement Values
-        Vector3 rootDirection = transform.forward;
-        Vector3 inputDirection = new Vector3(sidewaysInput, 0, forwardInput);
-        Vector3 cameraDirection = cameraTransform.forward;
-        cameraDirection.y = 0;
-        Quaternion referentialShift = Quaternion.FromToRotation(Vector3.forward, cameraDirection);
-        Vector3 moveDirection = referentialShift * inputDirection;
-        Vector3 axisSign = Vector3.Cross(moveDirection, rootDirection);
-        speed = inputDirection.sqrMagnitude;
-        float angleRootToMove = Vector3.Angle(rootDirection, moveDirection) * (axisSign.y >= 0 ? -1 : 1);
+        //Vector3 rootDirection = transform.forward;
+        //Vector3 inputDirection = new Vector3(sidewaysInput, 0, forwardInput);
+        //Vector3 cameraDirection = cameraTransform.forward;
+        //cameraDirection.y = 0;
+        //Quaternion referentialShift = Quaternion.FromToRotation(Vector3.forward, cameraDirection);
+        //Vector3 moveDirection = referentialShift * inputDirection;
+        //Vector3 axisSign = Vector3.Cross(moveDirection, rootDirection);
+        //speed = inputDirection.sqrMagnitude;
+        //float angleRootToMove = Vector3.Angle(rootDirection, moveDirection) * (axisSign.y >= 0 ? -1 : 1);
 
-        if(!IsInPivot())
-            pivotAngle = angleRootToMove;
+        //if(!IsInPivot())
+        //    pivotAngle = angleRootToMove;
 
-        angleRootToMove /= 180f;
-        direction = angleRootToMove * directionSpeed * (speed == 0 ? 0 : 1);
+        //angleRootToMove /= 180f;
+        //direction = angleRootToMove * directionSpeed * (speed == 0 ? 0 : 1);
 
+        Vector3 directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up) * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
+        directionToMove = Vector3.ClampMagnitude(directionToMove, movespeed);
+
+
+        float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
+        animator.SetFloat("Speed", speed);
+        animator.SetFloat("Direction", 0, directionDampTime, Time.deltaTime);
+
+        if (directionToMove.magnitude != 0)
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(directionToMove.normalized), rotationDampSpeed);
+
+
+        velocity.x = directionToMove.x;
+        velocity.z = directionToMove.z;
+
+        if (!isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
+        //if (jump)
+        //{
+        //    velocity.y += jumpPower;
+        //    jump = false;
+        //}
+
+        characterController.Move(velocity * Time.deltaTime);
 
         //Set Animator Values
-        animator.SetFloat("Speed", speed, speedDampTime, Time.deltaTime);
+        //animator.SetFloat("Speed", speed, speedDampTime, Time.deltaTime);
 
+        /*
         if (speed > locomotionThreshold)
         {
             if (!IsInPivot())
@@ -86,6 +117,7 @@ public class PlayerMovementScript : MonoBehaviour {
             animator.SetFloat("Angle", 0);
             animator.SetFloat("Direction", 0);
         }
+        */
     }
 
     void FixedUpdate()

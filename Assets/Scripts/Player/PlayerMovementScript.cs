@@ -15,7 +15,7 @@ public class PlayerMovementScript : MonoBehaviour {
     private float rotationDegreesPerSecond = 120f;
     private float direction;
     private float pivotAngle;
-    private Vector3 velocity;
+    public Vector3 velocity;
 
     //Public variables
     public float sidewaysInput;
@@ -26,6 +26,8 @@ public class PlayerMovementScript : MonoBehaviour {
     public float movespeed = 10f;
     public float gravity = -10f;
     public float rotationDampSpeed = 0.3f;
+    public float jumpPower = 10f;
+    public bool jump = false;
     public bool isGrounded;
     public LayerMask platformsLayer;
 
@@ -75,7 +77,7 @@ public class PlayerMovementScript : MonoBehaviour {
 
         float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
         animator.SetFloat("Speed", speed);
-        animator.SetFloat("Direction", 0, directionDampTime, Time.deltaTime);
+        //animator.SetFloat("Direction", 0, directionDampTime, Time.deltaTime);
 
         if (directionToMove.magnitude != 0)
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(directionToMove.normalized), rotationDampSpeed);
@@ -88,11 +90,11 @@ public class PlayerMovementScript : MonoBehaviour {
         {
             velocity.y += gravity * Time.deltaTime;
         }
-        //if (jump)
-        //{
-        //    velocity.y += jumpPower;
-        //    jump = false;
-        //}
+        if (jump)
+        {
+            velocity.y = jumpPower;
+            jump = false;
+        }
 
         characterController.Move(velocity * Time.deltaTime);
 
@@ -122,16 +124,12 @@ public class PlayerMovementScript : MonoBehaviour {
 
     void FixedUpdate()
     {
-        if (IsInLocomotion() && ((direction >= 0 && sidewaysInput >= 0) || (direction < 0 && sidewaysInput < 0)))
-        {
-            Vector3 rotationAmount = Vector3.Lerp(Vector3.zero, new Vector3(0f, rotationDegreesPerSecond * sidewaysInput < 0f ? -1f : 1f, 0f), Mathf.Abs(sidewaysInput));
-            Quaternion deltaRotation = Quaternion.Euler(rotationAmount * Time.fixedDeltaTime);
-            transform.rotation = transform.rotation * deltaRotation;
-        }
     }
 
     public void Jump()
-    { 
+    {
+        if(isGrounded)
+            jump = true;
     }
 
     private void CheckIsGrounded()
@@ -139,6 +137,7 @@ public class PlayerMovementScript : MonoBehaviour {
         if (Physics.Raycast(transform.position, -transform.up, 0.1f, platformsLayer))
         {
             isGrounded = true;
+            velocity.y = 0;
         }
         else
         {

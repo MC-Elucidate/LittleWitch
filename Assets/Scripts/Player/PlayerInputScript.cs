@@ -19,7 +19,7 @@ public class PlayerInputScript : MonoBehaviour
     {
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
         magicManager = gameObject.GetComponent<MagicManager>();
-        camera = Camera.main.GetComponent<CameraScript>();
+        camera = Camera.main.GetComponentInParent<CameraScript>();// gameObject.parent.parent.GetComponent<CameraScript>();
         inputString = new StringBuilder();
 
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;

@@ -7,192 +7,85 @@ using UnityEngine;
 /// </summary>
 public class CameraScript : MonoBehaviour
 {
-    #region Variables (private)
+    protected Transform target;
+    protected PlayerMovementScript targetMovement;
+    protected Transform cameraTransform; // the transform of the camera
 
-    // Inspector serialized	
-    [SerializeField]
-    private Transform cameraXform;
-    [SerializeField]
-    private float distanceAway;
-    [SerializeField]
-    private float distanceUp;
-    [SerializeField]
-    private PlayerMovementScript follow;
-    [SerializeField]
-    private Transform followXform;
+    public float recentreTurnSpeed = 10f;
+    public float regularTurnSpeed = 1f;
 
+    private float moveSpeed; // How fast the rig will move to keep up with target's position
+    private float cameraRotateSpeed; // How fast the rig will turn to keep up with target's rotation
+    private float rollSpeed = 0.2f;// How fast the rig will roll (around Z axis) to match target's roll.
+    private bool followVelocity = true;// Whether the rig will rotate in the direction of the target's velocity.
+    private bool FollowTilt = false; // Whether the rig will tilt (around X axis) with the target. (Usable on slopes?)
+    private bool recentre = false;
+    private float smoothTurnTime = 0.2f; // the smoothing for the camera's rotation
+    
+    private float currentTurnAmount; // How much to turn the camera
+    private float turnSpeedVelocityChange; // The change in the turn speed velocity
+    private Vector3 rollUp = Vector3.up;// The roll of the camera around the z axis ( generally this will always just be up )
 
-    // Smoothing and damping
-    private Vector3 velocityCamSmooth = Vector3.zero;
-    [SerializeField]
-    private float camSmoothDampTime = 0.1f;
-    private Vector3 velocityLookDir = Vector3.zero;
-    [SerializeField]
-    private float lookDirDampTime = 0.1f;
-
-
-    // Private global only
-    private Vector3 lookDir;
-    private Vector3 curLookDir;
-    private CamStates camState = CamStates.Behind;
-    private Vector3 characterOffset;
-    private Vector3 targetPosition;
-
-    #endregion
-
-
-    #region Properties (public)	
-
-    public Transform CameraXform
+    protected virtual void Start()
     {
-        get
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        target = player.transform;
+        targetMovement = player.GetComponent<PlayerMovementScript>();
+        cameraTransform = GetComponentInChildren<Camera>().transform;
+
+        moveSpeed = targetMovement.movespeed;
+        cameraRotateSpeed = regularTurnSpeed;
+    }
+
+    private void LateUpdate()
+    {
+        FollowTarget(Time.deltaTime);
+    }
+
+    protected void FollowTarget(float deltaTime)
+    {
+        // if no target, or no time passed then we quit early, as there is nothing to do
+        if (!(deltaTime > 0) || target == null || (targetMovement.velocity.sqrMagnitude == 0 && !recentre ))
         {
-            return this.cameraXform;
-        }
-    }
-
-    public Vector3 LookDir
-    {
-        get
-        {
-            return this.curLookDir;
-        }
-    }
-
-    public CamStates CamState
-    {
-        get
-        {
-            return this.camState;
-        }
-    }
-
-    public enum CamStates
-    {
-        Behind,         // Classic 3rd person camera
-        Target,        // Used to centre camera behind character
-    }
-
-    public Vector3 RigToGoalDirection
-    {
-        get
-        {
-            // Move height and distance from character in separate parentRig transform since RotateAround has control of both position and rotation
-            Vector3 rigToGoalDirection = Vector3.Normalize(characterOffset - this.transform.position);
-            // Can't calculate distanceAway from a vector with Y axis rotation in it; zero it out
-            rigToGoalDirection.y = 0f;
-
-            return rigToGoalDirection;
-        }
-    }
-
-    #endregion
-
-
-    #region Unity event functions
-
-    /// <summary>
-    /// Use this for initialization.
-    /// </summary>
-    void Start()
-    {
-        cameraXform = this.transform;
-
-        follow = GameObject.FindWithTag("Player").GetComponent<PlayerMovementScript>();
-        followXform = GameObject.FindWithTag("Player").transform;
-
-        lookDir = followXform.forward;
-        curLookDir = followXform.forward;
-
-        // Intialize values to avoid having 0s
-        characterOffset = followXform.position + new Vector3(0f, distanceUp, 0f);
-    }
-
-    /// <summary>
-    /// Update is called once per frame.
-    /// </summary>
-    void Update()
-    {
-
-    }
-
-    void LateUpdate()
-    {
-        float leftX = follow.sidewaysInput;
-        float leftY = follow.forwardInput;
-
-        characterOffset = followXform.position + (distanceUp * followXform.up);
-        Vector3 lookAt = characterOffset;
-        targetPosition = Vector3.zero;
-        
-        // Execute camera state
-        switch (camState)
-        {
-            case CamStates.Behind:
-                ResetCamera();
-
-                // Only update camera look direction if moving
-                if (follow.speed > follow.locomotionThreshold && follow.IsInLocomotion() && !follow.IsInPivot())
-                {
-                    lookDir = Vector3.Lerp(followXform.right * (leftX < 0 ? 1f : -1f), followXform.forward * (leftY < 0 ? -1f : 1f), Mathf.Abs(Vector3.Dot(this.transform.forward, followXform.forward)));
-                    
-
-                    // Calculate direction from camera to player, kill Y, and normalize to give a valid direction with unit magnitude
-                    curLookDir = Vector3.Normalize(characterOffset - this.transform.position);
-                    curLookDir.y = 0;
-                    
-
-                    // Damping makes it so we don't update targetPosition while pivoting; camera shouldn't rotate around player
-                    curLookDir = Vector3.SmoothDamp(curLookDir, lookDir, ref velocityLookDir, lookDirDampTime);
-                }
-
-                targetPosition = characterOffset + followXform.up * distanceUp - Vector3.Normalize(curLookDir) * distanceAway;
-                
-
-                break;
-
-            case CamStates.Target:
-                ResetCamera();
-                lookDir = followXform.forward;
-                curLookDir = followXform.forward;
-
-                targetPosition = characterOffset + followXform.up * distanceUp - lookDir * distanceAway;
-
-                break;
-            
+            return;
         }
 
-        SmoothPosition(cameraXform.position, targetPosition);
-        transform.LookAt(lookAt);
+        // initialise some vars, we'll be modifying these in a moment
+        var targetForward = target.forward;
+        var targetUp = target.up;
+
+        if (followVelocity && Application.isPlaying)
+        {
+            currentTurnAmount = Mathf.SmoothDamp(currentTurnAmount, 1, ref turnSpeedVelocityChange, smoothTurnTime);
+        }
+
+        if (recentre)
+            cameraRotateSpeed = recentreTurnSpeed;
+        else
+            cameraRotateSpeed = regularTurnSpeed;
+
+        // camera position moves towards target position:
+        transform.position = Vector3.Lerp(transform.position, target.position, deltaTime * moveSpeed);
+
+        // camera's rotation is split into two parts, which can have independend speed settings:
+        // rotating towards the target's forward direction (which encompasses its 'yaw' and 'pitch')
+        if (!FollowTilt)
+        {
+            targetForward.y = 0;
+            if (targetForward.sqrMagnitude < float.Epsilon)
+            {
+                targetForward = transform.forward;
+            }
+        }
+        var rollRotation = Quaternion.LookRotation(targetForward, rollUp);
+
+        // and aligning with the target object's up direction (i.e. its 'roll')
+        rollUp = rollSpeed > 0 ? Vector3.Slerp(rollUp, targetUp, rollSpeed * deltaTime) : Vector3.up;
+
+        if (targetMovement.sidewaysInput != 0 || recentre)
+            transform.rotation = Quaternion.Lerp(transform.rotation, rollRotation, cameraRotateSpeed * currentTurnAmount * deltaTime);
     }
 
-    #endregion
-
-
-    #region Methods
-
-    private void SmoothPosition(Vector3 fromPos, Vector3 toPos)
-    {
-        // Making a smooth transition between camera's current position and the position it wants to be in
-        cameraXform.position = Vector3.SmoothDamp(fromPos, toPos, ref velocityCamSmooth, camSmoothDampTime);
-    }
-
-    /// <summary>
-    /// Reset local position of camera inside of parentRig and resets character's look IK.
-    /// </summary>
-    private void ResetCamera()
-    {
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, Time.deltaTime);
-    }
-
-    public void RecentrePressed()
-    {
-        camState = CamStates.Target;
-    }
-    public void RecentreReleased()
-    {
-        camState = CamStates.Behind;
-    }
-
-    #endregion Methods
+    public void RecentrePressed() { recentre = true; }
+    public void RecentreReleased() { recentre = false; }
 }

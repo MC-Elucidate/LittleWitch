@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class Spell: MonoBehaviour
 {
     public string spellName;
+    public Sprite spellIcon;
     public string inputString;
     public Element element;
     public SpellType type;

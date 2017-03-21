@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovementScript : MonoBehaviour {
+public class PlayerMovementScript : MonoBehaviour
+{
 
     //Private GameObjects
     private Animator animator;
@@ -10,23 +11,24 @@ public class PlayerMovementScript : MonoBehaviour {
     public Transform cameraTransform;
 
     //Movement details
-    private float directionDampTime = 0.25f;
-    private float speedDampTime = 0.05f;
-    private float rotationDegreesPerSecond = 120f;
-    private float direction;
-    private float pivotAngle;
+    //private float directionDampTime = 0.25f;
+    //private float speedDampTime = 0.05f;
+    //private float rotationDegreesPerSecond = 120f;
+    //private float direction;
+    //private float pivotAngle;
     public Vector3 velocity;
 
     //Public variables
     public float sidewaysInput;
     public float forwardInput;
-    public float directionSpeed = 3f;
-    public float speed = 0f;
-    public float locomotionThreshold = 0.7f;
+    //public float directionSpeed = 3f;
+    //public float speed = 0f;
+    //public float locomotionThreshold = 0.7f;
     public float movespeed = 10f;
     public float gravity = -10f;
     public float rotationDampSpeed = 0.3f;
     public float jumpPower = 10f;
+    public float airMovementAcceleration = 0.25f;
     public bool jump = false;
     public bool isGrounded;
     public LayerMask platformsLayer;
@@ -49,46 +51,35 @@ public class PlayerMovementScript : MonoBehaviour {
         idlePivotLeftHashID = Animator.StringToHash("Base Layer.IdlePivotLeft");
         idlePivotRightHashID = Animator.StringToHash("Base Layer.IdlePivotRight");
     }
-    
+
     void Update()
     {
         CheckIsGrounded();
+        UpdateMovement();
+        SetAnimatorValues();
+    }
 
-        //Calculate Movement Values
-        //Vector3 rootDirection = transform.forward;
-        //Vector3 inputDirection = new Vector3(sidewaysInput, 0, forwardInput);
-        //Vector3 cameraDirection = cameraTransform.forward;
-        //cameraDirection.y = 0;
-        //Quaternion referentialShift = Quaternion.FromToRotation(Vector3.forward, cameraDirection);
-        //Vector3 moveDirection = referentialShift * inputDirection;
-        //Vector3 axisSign = Vector3.Cross(moveDirection, rootDirection);
-        //speed = inputDirection.sqrMagnitude;
-        //float angleRootToMove = Vector3.Angle(rootDirection, moveDirection) * (axisSign.y >= 0 ? -1 : 1);
-
-        //if(!IsInPivot())
-        //    pivotAngle = angleRootToMove;
-
-        //angleRootToMove /= 180f;
-        //direction = angleRootToMove * directionSpeed * (speed == 0 ? 0 : 1);
-
-        Vector3 directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up) * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
-        directionToMove = Vector3.ClampMagnitude(directionToMove, movespeed);
-
-
-        float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
-        animator.SetFloat("Speed", speed);
-        //animator.SetFloat("Direction", 0, directionDampTime, Time.deltaTime);
-
-        if (directionToMove.magnitude != 0)
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(directionToMove.normalized), rotationDampSpeed);
-
-
-        velocity.x = directionToMove.x;
-        velocity.z = directionToMove.z;
-
-        if (!isGrounded)
+    void UpdateMovement()
+    {
+        Quaternion directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up);
+        Vector3 movementVector = directionToMove * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
+        movementVector = Vector3.ClampMagnitude(movementVector, movespeed);
+        
+        if (!isGrounded) //Apply gravity and aerial acceleration (acceleration in air is slower)
         {
+            Vector3 aerialInput = new Vector3(movementVector.x, 0, movementVector.z) * airMovementAcceleration * Time.deltaTime;
+            Vector3 clampedMoveSpeed = Vector3.ClampMagnitude(new Vector3(velocity.x + aerialInput.x, 0, velocity.z + aerialInput.z), movespeed);
             velocity.y += gravity * Time.deltaTime;
+            velocity.x = clampedMoveSpeed.x;
+            velocity.z = clampedMoveSpeed.z;
+        }
+        else //Apply regular movement
+        {
+            velocity.x = movementVector.x;
+            velocity.z = movementVector.z;
+            velocity.y = 0;
+            if (movementVector.magnitude != 0)
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
         }
         if (jump)
         {
@@ -97,38 +88,11 @@ public class PlayerMovementScript : MonoBehaviour {
         }
 
         characterController.Move(velocity * Time.deltaTime);
-
-        //Set Animator Values
-        //animator.SetFloat("Speed", speed, speedDampTime, Time.deltaTime);
-
-        /*
-        if (speed > locomotionThreshold)
-        {
-            if (!IsInPivot())
-            {
-                animator.SetFloat("Angle", pivotAngle);
-                animator.SetFloat("Direction", direction, directionDampTime, Time.deltaTime);
-            }
-            else
-            {
-                animator.SetFloat("Direction", 0);
-            }
-        }
-        if (speed < locomotionThreshold && Mathf.Abs(sidewaysInput) < 0.05f)
-        {
-            animator.SetFloat("Angle", 0);
-            animator.SetFloat("Direction", 0);
-        }
-        */
-    }
-
-    void FixedUpdate()
-    {
     }
 
     public void Jump()
     {
-        if(isGrounded)
+        if (isGrounded)
             jump = true;
     }
 
@@ -137,7 +101,6 @@ public class PlayerMovementScript : MonoBehaviour {
         if (Physics.Raycast(transform.position, -transform.up, 0.1f, platformsLayer))
         {
             isGrounded = true;
-            velocity.y = 0;
         }
         else
         {
@@ -156,4 +119,54 @@ public class PlayerMovementScript : MonoBehaviour {
             animator.GetCurrentAnimatorStateInfo(0).fullPathHash == idlePivotRightHashID ||
             animator.GetCurrentAnimatorStateInfo(0).fullPathHash == idlePivotLeftHashID;
     }
+    private void SetAnimatorValues()
+    {
+        float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
+        animator.SetFloat("Speed", speed);
+    }
 }
+
+
+//Stuff needed for pivot animations later
+/*
+    Calculate Movement Values
+    Vector3 rootDirection = transform.forward;
+    Vector3 inputDirection = new Vector3(sidewaysInput, 0, forwardInput);
+    Vector3 cameraDirection = cameraTransform.forward;
+    cameraDirection.y = 0;
+    Quaternion referentialShift = Quaternion.FromToRotation(Vector3.forward, cameraDirection);
+    Vector3 moveDirection = referentialShift * inputDirection;
+    Vector3 axisSign = Vector3.Cross(moveDirection, rootDirection);
+    speed = inputDirection.sqrMagnitude;
+    float angleRootToMove = Vector3.Angle(rootDirection, moveDirection) * (axisSign.y >= 0 ? -1 : 1);
+
+    if(!IsInPivot())
+        pivotAngle = angleRootToMove;
+
+    angleRootToMove /= 180f;
+    direction = angleRootToMove* directionSpeed * (speed == 0 ? 0 : 1);
+
+
+
+    Set Animator Values
+    animator.SetFloat("Speed", speed, speedDampTime, Time.deltaTime);
+
+    
+    if (speed > locomotionThreshold)
+    {
+        if (!IsInPivot())
+        {
+            animator.SetFloat("Angle", pivotAngle);
+            animator.SetFloat("Direction", direction, directionDampTime, Time.deltaTime);
+        }
+        else
+        {
+            animator.SetFloat("Direction", 0);
+        }
+    }
+    if (speed < locomotionThreshold && Mathf.Abs(sidewaysInput) < 0.05f)
+    {
+        animator.SetFloat("Angle", 0);
+        animator.SetFloat("Direction", 0);
+    }
+    */

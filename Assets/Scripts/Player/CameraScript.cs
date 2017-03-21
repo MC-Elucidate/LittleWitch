@@ -45,7 +45,7 @@ public class CameraScript : MonoBehaviour
     protected void FollowTarget(float deltaTime)
     {
         // if no target, or no time passed then we quit early, as there is nothing to do
-        if (!(deltaTime > 0) || target == null || (targetMovement.velocity.sqrMagnitude == 0 && !recentre ))
+        if (!(deltaTime > 0) || target == null)
         {
             return;
         }

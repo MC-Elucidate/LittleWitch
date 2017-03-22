@@ -54,6 +54,9 @@ public class UIManager : MonoBehaviour
 
     public void UISetReadySpellIcon()
     {
+        if (magicManager == null)
+            return;
+
         if (magicManager.readySpellPrefab != null && readySpell.sprite != magicManager.readySpellPrefab.GetComponent<Spell>().spellIcon)
         {
             readySpell.gameObject.SetActive(true);

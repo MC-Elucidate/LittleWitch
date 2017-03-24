@@ -77,14 +77,10 @@ public class PlayerMovementScript : MonoBehaviour
         {
             velocity.x = movementVector.x;
             velocity.z = movementVector.z;
-            velocity.y = 0;
+            if(!jump)
+                velocity.y = gravity;
             if (movementVector.magnitude != 0)
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
-        }
-        if (jump)
-        {
-            velocity.y = jumpPower;
-            jump = false;
         }
 
         characterController.Move(velocity * Time.deltaTime);
@@ -93,19 +89,28 @@ public class PlayerMovementScript : MonoBehaviour
     public void Jump()
     {
         if (isGrounded)
+        {
             jump = true;
+            velocity.y = jumpPower;
+        }
     }
 
     private void CheckIsGrounded()
     {
-        if (Physics.Raycast(transform.position, -transform.up, 0.1f, platformsLayer))
-        {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
+        bool previouslyGrounded = isGrounded;
+        //get the radius of the players capsule collider, and make it a tiny bit smaller than that
+        float radius = characterController.radius * 0.9f;
+        //get the position (assuming its right at the bottom) and move it up by almost the whole radius
+        Vector3 pos = transform.position + Vector3.up * 2 * (radius * 0.9f);
+        //returns true if the sphere touches something on that layer
+        RaycastHit raycastHitInfo;
+        isGrounded = Physics.SphereCast(pos, radius, Vector3.down, out raycastHitInfo, radius, platformsLayer);
+
+        if (previouslyGrounded && !isGrounded && !jump)
+            velocity.y = 0;
+        if (!previouslyGrounded && isGrounded)
+            jump = false;
+        
     }
 
     public bool IsInLocomotion()

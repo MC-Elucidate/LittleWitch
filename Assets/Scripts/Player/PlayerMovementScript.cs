@@ -27,8 +27,8 @@ public class PlayerMovementScript : MonoBehaviour
     public float movespeed = 10f;
     public float gravity = -10f;
     public float rotationDampSpeed = 0.3f;
-    public float jumpPower = 10f;
-    public float airMovementAcceleration = 0.25f;
+    public float jumpPower = 4f;
+    public float airMovementAcceleration = 0.8f;
     public bool jump = false;
     public bool isGrounded;
     public LayerMask platformsLayer;
@@ -79,9 +79,9 @@ public class PlayerMovementScript : MonoBehaviour
             velocity.z = movementVector.z;
             if(!jump)
                 velocity.y = gravity;
-            if (movementVector.magnitude != 0)
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
         }
+        if (movementVector.magnitude != 0)
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
 
         characterController.Move(velocity * Time.deltaTime);
     }

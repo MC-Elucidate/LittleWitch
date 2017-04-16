@@ -11,7 +11,7 @@ public class PlayerInputScript : MonoBehaviour
     {
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
         magicManager = gameObject.GetComponent<MagicManager>();
-        camera = Camera.main.GetComponentInParent<CameraScript>();// gameObject.parent.parent.GetComponent<CameraScript>();
+        camera = Camera.main.GetComponentInParent<CameraScript>();
     }
 
     void Update()
@@ -28,6 +28,8 @@ public class PlayerInputScript : MonoBehaviour
         //Jump
         if (Input.GetButtonDown("Jump"))
             playerMovement.Jump();
+        if (Input.GetButtonUp("Jump"))
+            playerMovement.EndJump();
 
         //Camera
         if (Input.GetButtonDown("RecentreCamera"))

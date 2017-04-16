@@ -10,28 +10,32 @@ public class PlayerMovementScript : MonoBehaviour
     private CharacterController characterController;
     public Transform cameraTransform;
 
-    //Movement details
+    //Movement variables
+    public Vector3 velocity;
+    public float sidewaysInput;
+    public float forwardInput;
+    public float movespeed = 10f;
+    public float gravity = -10f;
+    public float rotationDampSpeed = 0.5f;
+    public float airMovementAcceleration = 0.8f;
+    public bool isGrounded;
+    public LayerMask platformsLayer;
+
     //private float directionDampTime = 0.25f;
     //private float speedDampTime = 0.05f;
     //private float rotationDegreesPerSecond = 120f;
     //private float direction;
     //private float pivotAngle;
-    public Vector3 velocity;
-
-    //Public variables
-    public float sidewaysInput;
-    public float forwardInput;
     //public float directionSpeed = 3f;
     //public float speed = 0f;
     //public float locomotionThreshold = 0.7f;
-    public float movespeed = 10f;
-    public float gravity = -10f;
-    public float rotationDampSpeed = 0.3f;
+
+
+    //Jump variables
+    public bool jumping = false;
     public float jumpPower = 4f;
-    public float airMovementAcceleration = 0.8f;
-    public bool jump = false;
-    public bool isGrounded;
-    public LayerMask platformsLayer;
+    public float jumpHoldMax = 0.35f;
+    private float jumpHoldCurrent = 0f;
 
     //Hashes
     private int locomotionHashID;
@@ -55,6 +59,7 @@ public class PlayerMovementScript : MonoBehaviour
     void Update()
     {
         CheckIsGrounded();
+        CheckJumpHoldTimer(Time.deltaTime);
         UpdateMovement();
         SetAnimatorValues();
     }
@@ -69,15 +74,17 @@ public class PlayerMovementScript : MonoBehaviour
         {
             Vector3 aerialInput = new Vector3(movementVector.x, 0, movementVector.z) * airMovementAcceleration * Time.deltaTime;
             Vector3 clampedMoveSpeed = Vector3.ClampMagnitude(new Vector3(velocity.x + aerialInput.x, 0, velocity.z + aerialInput.z), movespeed);
-            velocity.y += gravity * Time.deltaTime;
             velocity.x = clampedMoveSpeed.x;
             velocity.z = clampedMoveSpeed.z;
+
+            if(!jumping)
+                velocity.y += gravity * Time.deltaTime;
         }
         else //Apply regular movement
         {
             velocity.x = movementVector.x;
             velocity.z = movementVector.z;
-            if(!jump)
+            if(!jumping)
                 velocity.y = gravity;
         }
         if (movementVector.magnitude != 0)
@@ -90,9 +97,15 @@ public class PlayerMovementScript : MonoBehaviour
     {
         if (isGrounded)
         {
-            jump = true;
+            jumping = true;
             velocity.y = jumpPower;
         }
+    }
+
+    public void EndJump()
+    {
+        jumping = false;
+        jumpHoldCurrent = 0f;
     }
 
     private void CheckIsGrounded()
@@ -106,11 +119,22 @@ public class PlayerMovementScript : MonoBehaviour
         RaycastHit raycastHitInfo;
         isGrounded = Physics.SphereCast(pos, radius, Vector3.down, out raycastHitInfo, radius, platformsLayer);
 
-        if (previouslyGrounded && !isGrounded && !jump)
+        if (previouslyGrounded && !isGrounded && !jumping)
             velocity.y = 0;
         if (!previouslyGrounded && isGrounded)
-            jump = false;
+            EndJump();
         
+    }
+
+    private void CheckJumpHoldTimer(float deltaTime)
+    {
+        if (!jumping)
+            return;
+
+        jumpHoldCurrent += deltaTime;
+
+        if (jumpHoldCurrent >= jumpHoldMax)
+            EndJump();
     }
 
     public bool IsInLocomotion()

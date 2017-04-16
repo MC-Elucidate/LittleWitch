@@ -152,6 +152,7 @@ public class PlayerMovementScript : MonoBehaviour
     {
         float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
         animator.SetFloat("Speed", speed);
+        animator.SetBool("InAir", !isGrounded);
     }
 }
 

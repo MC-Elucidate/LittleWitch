@@ -11,7 +11,7 @@ public class PlayerInputScript : MonoBehaviour
     {
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
         magicManager = gameObject.GetComponent<MagicManager>();
-        camera = Camera.main.GetComponentInParent<CameraScript>();
+        camera = Camera.main.GetComponent<CameraScript>();
     }
 
     void Update()
@@ -32,10 +32,17 @@ public class PlayerInputScript : MonoBehaviour
             playerMovement.EndJump();
 
         //Camera
-        if (Input.GetButtonDown("RecentreCamera"))
-            camera.RecentrePressed();
-        if (Input.GetButtonUp("RecentreCamera"))
-            camera.RecentreReleased();
+        float controllerInputVertical = Input.GetAxis("CameraVerticalC") * camera.controllerSensitivity;
+        float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * camera.controllerSensitivity;
+        if (controllerInputHorizontal == 0)
+            camera.pitchValue = Input.GetAxis("CameraHorizontalM") * camera.mouseSensitivity;
+        else
+            camera.pitchValue = controllerInputHorizontal;
+
+        if (controllerInputVertical == 0)
+            camera.yawValue = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
+        else
+            camera.yawValue = controllerInputVertical;
 
         //Aim
         if (Input.GetButtonDown("Aim"))

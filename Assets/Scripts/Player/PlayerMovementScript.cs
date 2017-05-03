@@ -8,6 +8,8 @@ public class PlayerMovementScript : MonoBehaviour
     //Private GameObjects
     private Animator animator;
     private CharacterController characterController;
+    private Transform cameraPositionTarget;
+    private CameraScript cameraScript;
     public Transform cameraTransform;
 
     //Movement variables
@@ -37,6 +39,9 @@ public class PlayerMovementScript : MonoBehaviour
     public float jumpHoldMax = 0.35f;
     private float jumpHoldCurrent = 0f;
 
+    //Camera variables
+    public float yawInput;
+
     //Hashes
     private int locomotionHashID;
     private int pivotLeftHashID;
@@ -49,6 +54,8 @@ public class PlayerMovementScript : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
+        cameraPositionTarget = gameObject.FindObjectInChildren("CameraPositionTarget").transform;
+        cameraScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraScript>();
         locomotionHashID = Animator.StringToHash("Base Layer.Locomotion");
         pivotLeftHashID = Animator.StringToHash("Base Layer.LocomotionPivotLeft");
         pivotRightHashID = Animator.StringToHash("Base Layer.LocomotionPivotRight");
@@ -61,6 +68,7 @@ public class PlayerMovementScript : MonoBehaviour
         CheckIsGrounded();
         CheckJumpHoldTimer(Time.deltaTime);
         UpdateMovement();
+        AimRotation();
         SetAnimatorValues();
     }
 
@@ -91,6 +99,15 @@ public class PlayerMovementScript : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
 
         characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private void AimRotation()
+    {
+        if (cameraScript.state != CameraScript.CameraMode.Aim)
+            return;
+
+        if (yawInput != 0)
+            transform.Rotate(new Vector3(0, Time.deltaTime * yawInput, 0));
     }
 
     public void Jump()

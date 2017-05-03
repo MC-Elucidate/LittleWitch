@@ -6,12 +6,14 @@ public class PlayerInputScript : MonoBehaviour
     PlayerMovementScript playerMovement;
     MagicManager magicManager;
     CameraScript camera;
+    CameraPositionTargetScript cameraPositionTarget;
 
     void Start()
     {
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
         magicManager = gameObject.GetComponent<MagicManager>();
         camera = Camera.main.GetComponent<CameraScript>();
+        cameraPositionTarget = gameObject.GetComponentInChildren<CameraPositionTargetScript>();
     }
 
     void Update()
@@ -35,25 +37,40 @@ public class PlayerInputScript : MonoBehaviour
         float controllerInputVertical = Input.GetAxis("CameraVerticalC") * camera.controllerSensitivity;
         float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * camera.controllerSensitivity;
         if (controllerInputHorizontal == 0)
-            camera.pitchValue = Input.GetAxis("CameraHorizontalM") * camera.mouseSensitivity;
+        {
+            camera.yawInput = Input.GetAxis("CameraHorizontalM") * camera.mouseSensitivity;
+            playerMovement.yawInput = Input.GetAxis("CameraHorizontalM") * camera.mouseSensitivity;
+        }
         else
-            camera.pitchValue = controllerInputHorizontal;
+        {
+            camera.yawInput = controllerInputHorizontal;
+            playerMovement.yawInput = controllerInputHorizontal;
+        }
 
         if (controllerInputVertical == 0)
-            camera.yawValue = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
+        {
+            camera.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
+            cameraPositionTarget.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
+        }
         else
-            camera.yawValue = controllerInputVertical;
+        {
+            camera.pitchInput = controllerInputVertical;
+            cameraPositionTarget.pitchInput = controllerInputVertical;
+        }
 
         //Aim
         if (Input.GetButtonDown("Aim"))
         {
+            cameraPositionTarget.ResetPosition();
             magicManager.ClearInputs();
+            camera.EnterAimMode();
             Debug.Log("Aiming!");
         }
         if (Input.GetButtonUp("Aim"))
         {
-            Debug.Log("Not Aiming anymore. Cast!");
             magicManager.CastSpell();
+            camera.LeaveAimMode();
+            Debug.Log("Not Aiming anymore. Cast!");
         }
 
         for (int i = 1; i <= 3; i++)

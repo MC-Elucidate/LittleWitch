@@ -6,14 +6,14 @@ public class PlayerInputScript : MonoBehaviour
     PlayerMovementScript playerMovement;
     MagicManager magicManager;
     CameraScript camera;
-    CameraPositionTargetScript cameraPositionTarget;
+    CameraPositionPivotScript cameraPivot;
 
     void Start()
     {
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
         magicManager = gameObject.GetComponent<MagicManager>();
         camera = Camera.main.GetComponent<CameraScript>();
-        cameraPositionTarget = gameObject.GetComponentInChildren<CameraPositionTargetScript>();
+        cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
     }
 
     void Update()
@@ -50,18 +50,18 @@ public class PlayerInputScript : MonoBehaviour
         if (controllerInputVertical == 0)
         {
             camera.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
-            cameraPositionTarget.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
+            cameraPivot.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
         }
         else
         {
             camera.pitchInput = controllerInputVertical;
-            cameraPositionTarget.pitchInput = controllerInputVertical;
+            cameraPivot.pitchInput = controllerInputVertical;
         }
 
         //Aim
         if (Input.GetButtonDown("Aim"))
         {
-            cameraPositionTarget.ResetPosition();
+            cameraPivot.ResetPosition();
             magicManager.ClearInputs();
             camera.EnterAimMode();
             Debug.Log("Aiming!");

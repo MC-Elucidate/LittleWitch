@@ -13,9 +13,8 @@ public class CameraScript : MonoBehaviour
 
     public float yawInput = 0;
     public float pitchInput = 0;
-    public float smooth = 0.2f;
-    private float currentTurnAmount = 0f;
-    private float turnSpeedVelocityChange = 0f;
+    public float freeSmooth = 0.2f;
+    public float aimSmooth = 0.5f;
     public CameraMode state { get; private set; }
     public float mouseSensitivity = 50f;
     public float controllerSensitivity = 180f;
@@ -25,7 +24,7 @@ public class CameraScript : MonoBehaviour
     public Vector3 distanceFromTarget = new Vector3(0f, 0f, -4f);
 
     private const float PITCH_MAX_ANGLE = 45.0f;
-    private const float PITCH_MIN_ANGLE = 0.0f;
+    private const float PITCH_MIN_ANGLE = -10.0f;
     
     void Start()
     {
@@ -44,15 +43,16 @@ public class CameraScript : MonoBehaviour
             if (pitchInput != 0)
             {
                 Vector3 objRotation = transform.rotation.eulerAngles;
-                float newPitch = objRotation.x + (pitchInput * Time.deltaTime);
-                float clampedY = Mathf.Clamp(newPitch, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE);
-                transform.localEulerAngles = new Vector3(clampedY, objRotation.y, objRotation.z);
+                float oldPitch = objRotation.x > 180 ? objRotation.x - 360 : objRotation.x;
+                float newPitch = oldPitch + (pitchInput * Time.deltaTime);
+                float clampedPitch = Mathf.Clamp(newPitch, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE);
+                transform.localEulerAngles = new Vector3(clampedPitch, objRotation.y, objRotation.z);
             }
-            transform.position = Vector3.Lerp(transform.position, lookTarget.position + transform.rotation * distanceFromTarget, smooth);
+            transform.position = Vector3.Lerp(transform.position, lookTarget.position + transform.rotation * distanceFromTarget, aimSmooth);
         }
         else if (state == CameraMode.Aim)
         {
-            transform.position = Vector3.Lerp(transform.position, positionTarget.position, 0.5f);
+            transform.position = Vector3.Lerp(transform.position, positionTarget.position, aimSmooth);
         }
         transform.LookAt(lookTarget.position);
     }

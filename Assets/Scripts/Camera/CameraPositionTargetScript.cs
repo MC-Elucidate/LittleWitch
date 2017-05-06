@@ -5,20 +5,14 @@ using UnityEngine;
 public class CameraPositionTargetScript : MonoBehaviour {
 
     public Vector3 DistanceFromCharacter;
-    public float pitchInput = 0;
-    private Transform parent;
-    private Transform lookTarget;
-    
-	void Start ()
+
+    void Start ()
     {
-        parent = gameObject.GetComponentInParent<Transform>();
-        lookTarget = GameObject.FindGameObjectWithTag("CameraLookTarget").transform;
+        ResetPosition();
 	}
 
     void Update()
     {
-        if (pitchInput != 0)
-            transform.RotateAround(lookTarget.position, parent.right, Time.deltaTime * pitchInput);
     }
 
     public void ResetPosition()

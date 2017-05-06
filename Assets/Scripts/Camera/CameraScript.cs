@@ -20,7 +20,7 @@ public class CameraScript : MonoBehaviour
     public float controllerSensitivity = 180f;
 
     private Transform lookTarget;
-    private Transform positionTarget;
+    private CameraPositionPivotScript pivotTarget;
     public Vector3 distanceFromTarget = new Vector3(0f, 0f, -4f);
 
     private const float PITCH_MAX_ANGLE = 45.0f;
@@ -28,8 +28,8 @@ public class CameraScript : MonoBehaviour
     
     void Start()
     {
-        lookTarget = GameObject.FindGameObjectWithTag("CameraLookTarget").transform;
-        positionTarget = GameObject.FindGameObjectWithTag("CameraPositionTarget").transform;
+        lookTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraFollowTarget).transform;
+        pivotTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraPositionPivot).GetComponent<CameraPositionPivotScript>();
         state = CameraMode.Free;
     }
 
@@ -52,7 +52,7 @@ public class CameraScript : MonoBehaviour
         }
         else if (state == CameraMode.Aim)
         {
-            transform.position = Vector3.Lerp(transform.position, positionTarget.position, aimSmooth);
+            transform.position = Vector3.Lerp(transform.position, pivotTarget.GetTagetPosition(), aimSmooth);
         }
         transform.LookAt(lookTarget.position);
     }

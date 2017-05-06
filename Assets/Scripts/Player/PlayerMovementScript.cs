@@ -53,7 +53,7 @@ public class PlayerMovementScript : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
-        cameraScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraScript>();
+        cameraScript = Camera.main.GetComponent<CameraScript>();
         locomotionHashID = Animator.StringToHash("Base Layer.Locomotion");
         pivotLeftHashID = Animator.StringToHash("Base Layer.LocomotionPivotLeft");
         pivotRightHashID = Animator.StringToHash("Base Layer.LocomotionPivotRight");

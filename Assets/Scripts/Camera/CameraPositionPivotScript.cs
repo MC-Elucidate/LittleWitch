@@ -5,15 +5,14 @@ using UnityEngine;
 public class CameraPositionPivotScript : MonoBehaviour {
 
     public float pitchInput = 0;
-    private const float PITCH_MAX = 45;
-    private const float PITCH_MIN = -10;
+    public float pitchMaxAngle = 45;
+    public float pitchMinAngle = -10;
     private CameraPositionTargetScript cameraPositionTarget;
-    // Use this for initialization
+
     void Start () {
         cameraPositionTarget = gameObject.GetComponentInChildren<CameraPositionTargetScript>();
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 
         if (pitchInput != 0)
@@ -21,7 +20,7 @@ public class CameraPositionPivotScript : MonoBehaviour {
             Vector3 objRotation = transform.rotation.eulerAngles;
             float oldPitch = objRotation.x > 180 ? objRotation.x - 360 : objRotation.x;
             float newPitch = oldPitch + (pitchInput * Time.deltaTime);
-            float clampedPitch = Mathf.Clamp(newPitch, PITCH_MIN, PITCH_MAX);
+            float clampedPitch = Mathf.Clamp(newPitch, pitchMinAngle, pitchMaxAngle);
             transform.localEulerAngles = new Vector3(clampedPitch, 0, 0);
         }
     }
@@ -30,5 +29,10 @@ public class CameraPositionPivotScript : MonoBehaviour {
     {
         transform.localEulerAngles = new Vector3(0, 0, 0);
         cameraPositionTarget.ResetPosition();
+    }
+
+    public Vector3 GetTagetPosition()
+    {
+        return cameraPositionTarget.GetTargetPosition();
     }
 }

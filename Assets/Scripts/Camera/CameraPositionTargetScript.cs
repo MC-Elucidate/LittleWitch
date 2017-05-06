@@ -19,4 +19,9 @@ public class CameraPositionTargetScript : MonoBehaviour {
     {
         transform.localPosition = DistanceFromCharacter;
     }
+
+    public Vector3 GetTargetPosition()
+    {
+        return transform.position;
+    }
 }

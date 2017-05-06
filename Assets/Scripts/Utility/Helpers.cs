@@ -2,6 +2,12 @@
 
 public static class Helpers {
 
+    public class Tags
+    {
+        public const string CameraFollowTarget = "CameraLookTarget";
+        public const string CameraPositionPivot = "CameraPositionPivot";
+    }
+
     public static GameObject FindObjectInChildren(this GameObject gameObject, string gameObjectName)
     {
         Transform[] children = gameObject.GetComponentsInChildren<Transform>(true);

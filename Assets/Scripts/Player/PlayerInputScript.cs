@@ -23,17 +23,25 @@ public class PlayerInputScript : MonoBehaviour
 
     private void HandleInputs()
     {
-        //Movement
+        MovementInput();
+        CameraInput();
+        AimInput();
+        SpellInput();
+    }
+
+    void MovementInput()
+    {
         playerMovement.forwardInput = Input.GetAxis("Vertical");
         playerMovement.sidewaysInput = Input.GetAxis("Horizontal");
         
-        //Jump
         if (Input.GetButtonDown("Jump"))
             playerMovement.Jump();
         if (Input.GetButtonUp("Jump"))
             playerMovement.EndJump();
+    }
 
-        //Camera
+    void CameraInput()
+    {
         float controllerInputVertical = Input.GetAxis("CameraVerticalC") * camera.controllerSensitivity;
         float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * camera.controllerSensitivity;
         if (controllerInputHorizontal == 0)
@@ -57,8 +65,10 @@ public class PlayerInputScript : MonoBehaviour
             camera.pitchInput = controllerInputVertical;
             cameraPivot.pitchInput = controllerInputVertical;
         }
+    }
 
-        //Aim
+    void AimInput()
+    {
         if (Input.GetButtonDown("Aim"))
         {
             cameraPivot.ResetPosition();
@@ -72,11 +82,15 @@ public class PlayerInputScript : MonoBehaviour
             camera.LeaveAimMode();
             Debug.Log("Not Aiming anymore. Cast!");
         }
+    }
 
+    void SpellInput()
+    {
         for (int i = 1; i <= 3; i++)
         {
             if (Input.GetButtonDown("Element" + i))
                 magicManager.AddToInputString(i);
         }
     }
+
 }

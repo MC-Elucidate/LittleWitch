@@ -14,6 +14,7 @@ public class MagicManager : MonoBehaviour
     private UIManager uiManager;
     private StringBuilder inputString;
     private Transform spellSource;
+    private Transform cameraTransform;
     private float lastInputTime = 0f;
 
     public void Start()
@@ -21,7 +22,7 @@ public class MagicManager : MonoBehaviour
         uiManager = this.gameObject.GetComponent<UIManager>();
         inputString = new StringBuilder();
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;
-
+        cameraTransform = Camera.main.transform;
         uiManager.UISetReadySpellIcon();
     }
 
@@ -36,7 +37,7 @@ public class MagicManager : MonoBehaviour
         //Casting logic and animations go over here probably
         if (readySpellPrefab != null)
         {
-            GameObject.Instantiate(readySpellPrefab, spellSource.position, spellSource.rotation);
+            GameObject.Instantiate(readySpellPrefab, spellSource.position, cameraTransform.rotation);
             readySpellPrefab = null;
             uiManager.UISetReadySpellIcon();
         }

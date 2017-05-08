@@ -75,7 +75,7 @@ public class PlayerMovementScript : MonoBehaviour
         Quaternion directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up);
         Vector3 movementVector = directionToMove * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
         movementVector = Vector3.ClampMagnitude(movementVector, movespeed);
-        
+
         if (!isGrounded) //Apply gravity and aerial acceleration (acceleration in air is slower)
         {
             Vector3 aerialInput = new Vector3(movementVector.x, 0, movementVector.z) * airMovementAcceleration * Time.deltaTime;
@@ -83,7 +83,7 @@ public class PlayerMovementScript : MonoBehaviour
             velocity.x = clampedMoveSpeed.x;
             velocity.z = clampedMoveSpeed.z;
 
-            if(!jumping)
+            if (!jumping)
                 velocity.y += gravity * Time.deltaTime;
         }
         else //Apply regular movement
@@ -134,6 +134,9 @@ public class PlayerMovementScript : MonoBehaviour
         RaycastHit raycastHitInfo;
         isGrounded = Physics.SphereCast(pos, radius, Vector3.down, out raycastHitInfo, radius, platformsLayer);
 
+        if(isGrounded)
+            ParentToObject(raycastHitInfo.transform);
+
         if (previouslyGrounded && !isGrounded && !jumping)
             velocity.y = 0;
         if (!previouslyGrounded && isGrounded)
@@ -168,6 +171,14 @@ public class PlayerMovementScript : MonoBehaviour
         float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
         animator.SetFloat("Speed", speed);
         animator.SetBool("InAir", !isGrounded);
+    }
+
+    private void ParentToObject(Transform otherObject)
+    {
+        if (otherObject.root.tag == Helpers.Tags.MovingPlatform)
+            this.transform.parent = otherObject.root;
+        else
+            this.transform.parent = null;
     }
 }
 

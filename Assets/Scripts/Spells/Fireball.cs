@@ -20,7 +20,7 @@ public class Fireball : Spell
         Destroy(this.gameObject);
     }
 
-    void OnTriggerEnter()
+    void OnCollisionEnter()
     {
         this.Trigger();
     }

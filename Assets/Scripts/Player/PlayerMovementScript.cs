@@ -76,23 +76,30 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 movementVector = directionToMove * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
         movementVector = Vector3.ClampMagnitude(movementVector, movespeed);
 
-        if (!isGrounded) //Apply gravity and aerial acceleration (acceleration in air is slower)
-        {
-            Vector3 aerialInput = new Vector3(movementVector.x, 0, movementVector.z) * airMovementAcceleration * Time.deltaTime;
-            Vector3 clampedMoveSpeed = Vector3.ClampMagnitude(new Vector3(velocity.x + aerialInput.x, 0, velocity.z + aerialInput.z), movespeed);
-            velocity.x = clampedMoveSpeed.x;
-            velocity.z = clampedMoveSpeed.z;
+        //if (!isGrounded) //Apply slippery movement
+        //{
+        //    Vector3 aerialInput = new Vector3(movementVector.x, 0, movementVector.z) * airMovementAcceleration * Time.deltaTime;
+        //    Vector3 clampedMoveSpeed = Vector3.ClampMagnitude(new Vector3(velocity.x + aerialInput.x, 0, velocity.z + aerialInput.z), movespeed);
+        //    velocity.x = clampedMoveSpeed.x;
+        //    velocity.z = clampedMoveSpeed.z;
 
-            if (!jumping)
-                velocity.y += gravity * Time.deltaTime;
-        }
-        else //Apply regular movement
-        {
-            velocity.x = movementVector.x;
+        //if (isGrounded)
+        //    velocity.y = gravity;
+        //else
+        //    velocity.y += gravity * Time.deltaTime;
+        //}
+        //else //Apply regular movement
+        //{
+        velocity.x = movementVector.x;
             velocity.z = movementVector.z;
-            if(!jumping)
-                velocity.y = gravity;
-        }
+            if (!jumping)
+            {
+                if(isGrounded)
+                    velocity.y = gravity;
+                else
+                    velocity.y += gravity * Time.deltaTime;
+            }
+        //}
         if (movementVector.magnitude != 0)
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
 
@@ -134,8 +141,11 @@ public class PlayerMovementScript : MonoBehaviour
         RaycastHit raycastHitInfo;
         isGrounded = Physics.SphereCast(pos, radius, Vector3.down, out raycastHitInfo, radius, platformsLayer);
 
-        if(isGrounded)
+        if (isGrounded)
             ParentToObject(raycastHitInfo.transform);
+        else
+            transform.parent = null;
+            
 
         if (previouslyGrounded && !isGrounded && !jumping)
             velocity.y = 0;

@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour {
 
+
+    private bool active = false;
+    public Material activeMaterial;
+    public Material inactiveMaterial;
+    private MeshRenderer meshRenderer;
+
 	void Start () {
-		
+        meshRenderer = gameObject.GetComponent<MeshRenderer>();
 	}
 	
 	void Update () {
@@ -17,7 +23,18 @@ public class Checkpoint : MonoBehaviour {
         if (collider.gameObject.tag == Helpers.Tags.Player)
         {
             PlayerStatus player = collider.gameObject.GetComponent<PlayerStatus>();
-            player.CheckpointTouched(transform);
+            player.CheckpointTouched(this);
+            if (!active)
+            {
+                meshRenderer.material = activeMaterial;
+                active = true;
+            }
         }
+    }
+
+    public void SetInactive()
+    {
+        meshRenderer.material = inactiveMaterial;
+        active = false;
     }
 }

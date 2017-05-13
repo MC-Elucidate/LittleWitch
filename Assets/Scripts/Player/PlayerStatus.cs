@@ -6,7 +6,7 @@ public class PlayerStatus : MonoBehaviour {
 
     public int Health = 3;
     public int Mana = 10;
-    private Transform checkpoint;
+    private Checkpoint checkpoint;
     
 	void Start () {
 		
@@ -19,12 +19,14 @@ public class PlayerStatus : MonoBehaviour {
     public void OutOfBounds()
     {
         print("You fell");
-        transform.position = checkpoint.position;
+        transform.position = checkpoint.transform.position;
     }
 
-    public void CheckpointTouched(Transform checkpoint)
+    public void CheckpointTouched(Checkpoint checkpoint)
     {
         print("checkpoint touched!");
+        if(this.checkpoint != null)
+            this.checkpoint.SetInactive();
         this.checkpoint = checkpoint;
     }
 }

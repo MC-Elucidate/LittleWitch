@@ -72,10 +72,16 @@ public class PlayerMovementScript : MonoBehaviour
 
     void UpdateMovement()
     {
-        Quaternion directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up);
-        Vector3 movementVector = directionToMove * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
-        movementVector = Vector3.ClampMagnitude(movementVector, movespeed);
+        Vector3 movementVector;
+        if (cameraScript.state == CameraScript.CameraMode.Aim)
+            movementVector = new Vector3(0, 0, 0);
 
+        else
+        {
+            Quaternion directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up);
+            movementVector = directionToMove * new Vector3(sidewaysInput, 0, forwardInput) * movespeed;
+            movementVector = Vector3.ClampMagnitude(movementVector, movespeed);
+        }
         //if (!isGrounded) //Apply slippery movement
         //{
         //    Vector3 aerialInput = new Vector3(movementVector.x, 0, movementVector.z) * airMovementAcceleration * Time.deltaTime;
@@ -90,7 +96,7 @@ public class PlayerMovementScript : MonoBehaviour
         //}
         //else //Apply regular movement
         //{
-        velocity.x = movementVector.x;
+            velocity.x = movementVector.x;
             velocity.z = movementVector.z;
             if (!jumping)
             {
@@ -178,7 +184,7 @@ public class PlayerMovementScript : MonoBehaviour
     }
     private void SetAnimatorValues()
     {
-        float speed = new Vector2(sidewaysInput, forwardInput).sqrMagnitude;
+        float speed = new Vector2(velocity.x, velocity.z).sqrMagnitude;
         animator.SetFloat("Speed", speed);
         animator.SetBool("InAir", !isGrounded);
     }

@@ -34,7 +34,7 @@ public class MovingPlatform : MonoBehaviour {
                 currentIndex++;
         }
         else
-            transform.position = Vector3.MoveTowards(transform.position, points[currentIndex], speed);
+            transform.position = Vector3.MoveTowards(transform.position, points[currentIndex], speed * Time.deltaTime);
 	}
 
     private void Activate()

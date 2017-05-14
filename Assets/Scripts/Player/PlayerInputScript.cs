@@ -7,6 +7,7 @@ public class PlayerInputScript : MonoBehaviour
     MagicManager magicManager;
     CameraScript camera;
     CameraPositionPivotScript cameraPivot;
+    TimeSlow timeSlow;
 
     private enum TriggerState
     {
@@ -24,6 +25,7 @@ public class PlayerInputScript : MonoBehaviour
         magicManager = gameObject.GetComponent<MagicManager>();
         camera = Camera.main.GetComponent<CameraScript>();
         cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
+        timeSlow = gameObject.GetComponent<TimeSlow>();
         RightTrigger = TriggerState.NotHeld;
     }
 
@@ -40,6 +42,7 @@ public class PlayerInputScript : MonoBehaviour
         CameraInput();
         AimInput();
         SpellInput();
+        TimeInput();
     }
 
     private void CheckTriggers()
@@ -124,6 +127,14 @@ public class PlayerInputScript : MonoBehaviour
             if (Input.GetButtonDown("Element" + i))
                 magicManager.AddToInputString(i);
         }
+    }
+
+    void TimeInput()
+    {
+        if (Input.GetButtonDown("TimeSlow"))
+            timeSlow.SlowTime();
+        if (Input.GetButtonUp("TimeSlow"))
+            timeSlow.ResumeTime();
     }
 
 }

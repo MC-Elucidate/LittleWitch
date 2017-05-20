@@ -14,6 +14,9 @@ public class DeathZone : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        collider.gameObject.SendMessage("OutOfBounds");
+        if (collider.gameObject.tag == Helpers.Tags.Player)
+        {
+            collider.gameObject.GetComponent<PlayerStatus>().OutOfBounds();
+        }
     }
 }

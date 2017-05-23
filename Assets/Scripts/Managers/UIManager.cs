@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     private Image playerPortrait;
     private RectTransform healthBar;
     private RectTransform focusBar;
+    private RectTransform crosshair;
     private Image readySpell;
     private RectTransform[] inputStringPanel;
 
@@ -21,6 +22,7 @@ public class UIManager : MonoBehaviour
         playerPortrait = UIExposer.playerPortrait.GetComponent<Image>();
         healthBar = UIExposer.healthBar;
         focusBar = UIExposer.focusBar;
+        crosshair = UIExposer.crosshair;
         readySpell = UIExposer.readySpell.GetComponent<Image>();
         magicManager = this.GetComponent<MagicManager>();
     }
@@ -68,6 +70,11 @@ public class UIManager : MonoBehaviour
             readySpell.gameObject.SetActive(false);
             readySpell.sprite = null;
         }
+    }
+
+    internal void ToggleCrosshair(bool toggled)
+    {
+        crosshair.gameObject.SetActive(toggled);
     }
 
     #endregion

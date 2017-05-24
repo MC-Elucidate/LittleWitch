@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     private const string PLAYER_HUD_TAG = "PlayerHUD";
 
     private MagicManager magicManager;
+    private PlayerStatus playerStatus;
 
     private Image playerPortrait;
     private RectTransform healthBar;
@@ -16,6 +17,8 @@ public class UIManager : MonoBehaviour
     private Transform crosshair;
     private Image readySpell;
     private RectTransform[] inputStringPanel;
+
+    private int playerHealth = 0, playerMana = 0;
 
     // Use this for initialization
     void Start()
@@ -26,6 +29,7 @@ public class UIManager : MonoBehaviour
         focusBar = UIExposer.focusBar;
         readySpell = UIExposer.readySpell.GetComponent<Image>();
         magicManager = this.GetComponent<MagicManager>();
+        playerStatus = this.GetComponent<PlayerStatus>();
         crosshair = Instantiate<GameObject>(crosshairObject).transform;
 
         ToggleCrosshair(false);
@@ -53,7 +57,27 @@ public class UIManager : MonoBehaviour
 
     public void UISetPlayerResources()
     {
-        //throw new NotImplementedException();
+        if (playerStatus.Health != playerHealth)
+        {
+            playerHealth = playerStatus.Health;
+            this.healthBar.anchorMax = new Vector2((float)playerStatus.Health / PlayerStatus.MaxHealth, 1f);
+            this.healthBar.offsetMax = Vector2.zero;
+            this.healthBar.offsetMin = Vector2.zero;
+        }
+        if (playerStatus.Mana != playerMana)
+        {
+            playerMana = playerStatus.Mana;
+            this.focusBar.anchorMax = new Vector2((float)playerStatus.Mana / PlayerStatus.MaxMana, 1f);
+            this.focusBar.offsetMax = Vector2.zero;
+            this.focusBar.offsetMin = Vector2.zero;
+        }
+        //for (int i = 0; i > Hearts; i++)
+        //{
+        //    int col = i % 9;
+        //    int row = Mathf.Floor(i / 9f);
+
+        //    GUI.DrawTexture(new Rect(10 + (74 * col), 10 + (74 * row), 64, 64), heartTexture, ScaleMode.ScaleToFit);
+        //}
     }
 
     #endregion

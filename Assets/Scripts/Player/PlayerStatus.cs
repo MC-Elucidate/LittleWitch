@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour {
 
+    public const int MaxHealth = 3;
+    public const int MaxMana = 100;
     public int Health = 3;
-    public int Mana = 10;
+    public int Mana = 100;
     private Checkpoint checkpoint;
-    private int MaxHealth = 3;
-    
-	void Start () {
+ 
+    void Start () {
 		
 	}
 	

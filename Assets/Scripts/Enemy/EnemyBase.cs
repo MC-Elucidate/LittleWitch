@@ -49,31 +49,36 @@ public class EnemyBase : MonoBehaviour {
         }
     }
 
-    void FireInteraction()
+    protected virtual void FireInteraction()
     {
         print("My hair is on fire!");
     }
 
-    void WaterInteraction()
+    protected virtual void WaterInteraction()
     {
-        print("Soaking wet!");
+        print("Dance, Water! Dance!");
     }
 
-    void EarthInteraction()
+    protected virtual void EarthInteraction()
     {
         print("Rock 'n' more rock!");
     }
 
-    void WindInteraction()
+    protected virtual void WindInteraction()
     {
         print("Quick as the wind!");
     }
 
-    void TakeDamage(float damage)
+    protected virtual void TakeDamage(float damage)
     {
         Health -= damage;
         if (Health <= 0)
-            Destroy(gameObject, 1.5f);
+            Die();
+    }
+
+    protected virtual void Die()
+    {
+        Destroy(gameObject, 0f);
     }
 
 }

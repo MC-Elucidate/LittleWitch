@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class EnemyBumpTrigger : MonoBehaviour {
 
+    private BumpEnemyStatus status;
+
     void Start () {
-		
+        status = gameObject.GetComponent<BumpEnemyStatus>();
 	}
 	
 	void Update () {
@@ -14,6 +16,8 @@ public class EnemyBumpTrigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
+        if (status.IsDead())
+            return;
         if (collider.gameObject.tag == Helpers.Tags.Player)
         {
             collider.gameObject.GetComponent<PlayerStatus>().BumpedEnemy();

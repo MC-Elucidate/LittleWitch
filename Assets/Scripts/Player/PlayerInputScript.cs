@@ -6,7 +6,7 @@ public class PlayerInputScript : MonoBehaviour
     PlayerMovementScript playerMovement;
     MagicManager magicManager;
     UIManager uiManager;
-    CameraScript camera;
+    CameraScript cameraScript;
     CameraPositionPivotScript cameraPivot;
     TimeSlow timeSlow;
 
@@ -25,7 +25,7 @@ public class PlayerInputScript : MonoBehaviour
         playerMovement = gameObject.GetComponent<PlayerMovementScript>();
         magicManager = gameObject.GetComponent<MagicManager>();
         uiManager = gameObject.GetComponent<UIManager>();
-        camera = Camera.main.GetComponent<CameraScript>();
+        cameraScript = Camera.main.GetComponent<CameraScript>();
         cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
         timeSlow = gameObject.GetComponent<TimeSlow>();
         RightTrigger = TriggerState.NotHeld;
@@ -80,27 +80,27 @@ public class PlayerInputScript : MonoBehaviour
 
     void CameraInput()
     {
-        float controllerInputVertical = Input.GetAxis("CameraVerticalC") * camera.controllerSensitivity;
-        float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * camera.controllerSensitivity;
+        float controllerInputVertical = Input.GetAxis("CameraVerticalC") * cameraScript.controllerSensitivity;
+        float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * cameraScript.controllerSensitivity;
         if (controllerInputHorizontal == 0)
         {
-            camera.yawInput = Input.GetAxis("CameraHorizontalM") * camera.mouseSensitivity;
-            playerMovement.yawInput = Input.GetAxis("CameraHorizontalM") * camera.mouseSensitivity;
+            cameraScript.yawInput = Input.GetAxis("CameraHorizontalM") * cameraScript.mouseSensitivity;
+            playerMovement.yawInput = Input.GetAxis("CameraHorizontalM") * cameraScript.mouseSensitivity;
         }
         else
         {
-            camera.yawInput = controllerInputHorizontal;
+            cameraScript.yawInput = controllerInputHorizontal;
             playerMovement.yawInput = controllerInputHorizontal;
         }
 
         if (controllerInputVertical == 0)
         {
-            camera.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
-            cameraPivot.pitchInput = Input.GetAxis("CameraVerticalM") * camera.mouseSensitivity;
+            cameraScript.pitchInput = Input.GetAxis("CameraVerticalM") * cameraScript.mouseSensitivity;
+            cameraPivot.pitchInput = Input.GetAxis("CameraVerticalM") * cameraScript.mouseSensitivity;
         }
         else
         {
-            camera.pitchInput = controllerInputVertical;
+            cameraScript.pitchInput = controllerInputVertical;
             cameraPivot.pitchInput = controllerInputVertical;
         }
     }
@@ -111,14 +111,16 @@ public class PlayerInputScript : MonoBehaviour
         {
             cameraPivot.ResetPosition();
             magicManager.ClearInputs();
-            camera.EnterAimMode();
+            cameraScript.EnterAimMode();
+            timeSlow.SlowTime();
             uiManager.ToggleCrosshair(true);
             Debug.Log("Aiming!");
         }
         if (Input.GetButtonUp("Aim") || RightTrigger == TriggerState.Released)
         {
             magicManager.CastSpell();
-            camera.LeaveAimMode();
+            cameraScript.LeaveAimMode();
+            timeSlow.ResumeTime();
             uiManager.ToggleCrosshair(false);
             Debug.Log("Not Aiming anymore. Cast!");
         }
@@ -136,9 +138,9 @@ public class PlayerInputScript : MonoBehaviour
     void TimeInput()
     {
         if (Input.GetButtonDown("TimeSlow"))
-            timeSlow.SlowTime();
+            timeSlow.SlowTimeExcludePlayer();
         if (Input.GetButtonUp("TimeSlow"))
-            timeSlow.ResumeTime();
+            timeSlow.ResumeTimeExcludePlayer();
     }
 
 }

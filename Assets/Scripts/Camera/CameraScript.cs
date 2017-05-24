@@ -18,6 +18,7 @@ public class CameraScript : MonoBehaviour
     public CameraMode state { get; private set; }
     public float mouseSensitivity = 50f;
     public float controllerSensitivity = 180f;
+    private float timeEffect = 1;
 
     private Transform lookTarget;
     private CameraPositionPivotScript pivotTarget;
@@ -38,13 +39,13 @@ public class CameraScript : MonoBehaviour
         if (state == CameraMode.Free)
         {
             if (yawInput != 0)
-                transform.RotateAround(lookTarget.position, Vector3.up, Time.deltaTime * yawInput);
+                transform.RotateAround(lookTarget.position, Vector3.up, DeltaTime * yawInput);
 
             if (pitchInput != 0)
             {
                 Vector3 objRotation = transform.rotation.eulerAngles;
                 float oldPitch = objRotation.x > 180 ? objRotation.x - 360 : objRotation.x;
-                float newPitch = oldPitch + (pitchInput * Time.deltaTime);
+                float newPitch = oldPitch + (pitchInput * DeltaTime);
                 float clampedPitch = Mathf.Clamp(newPitch, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE);
                 transform.localEulerAngles = new Vector3(clampedPitch, objRotation.y, objRotation.z);
             }
@@ -60,4 +61,17 @@ public class CameraScript : MonoBehaviour
     public void EnterAimMode() { state = CameraMode.Aim; }
 
     public void LeaveAimMode() { state = CameraMode.Free; }
+
+    private float DeltaTime
+    { get { return Time.deltaTime / timeEffect; } }
+
+    public void TimeSlowMovementActive(float TimeSlowMultiplier)
+    {
+        this.timeEffect = TimeSlowMultiplier;
+    }
+
+    public void TimeSlowMovementDeactive()
+    {
+        this.timeEffect = 1;
+    }
 }

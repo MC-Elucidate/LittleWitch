@@ -19,6 +19,7 @@ public class PlayerMovementScript : MonoBehaviour
     public float gravity = -10f;
     public float rotationDampSpeed = 0.5f;
     public float airMovementAcceleration = 0.8f;
+    private float timeEffect = 1;
     public bool isGrounded;
     public LayerMask platformsLayer;
 
@@ -64,7 +65,7 @@ public class PlayerMovementScript : MonoBehaviour
     void Update()
     {
         CheckIsGrounded();
-        CheckJumpHoldTimer(Time.deltaTime);
+        CheckJumpHoldTimer();
         UpdateMovement();
         AimRotation();
         SetAnimatorValues();
@@ -103,13 +104,13 @@ public class PlayerMovementScript : MonoBehaviour
                 if(isGrounded)
                     velocity.y = gravity;
                 else
-                    velocity.y += gravity * Time.deltaTime;
+                    velocity.y += gravity * DeltaTime;
             }
         //}
         if (movementVector.magnitude != 0)
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
 
-        characterController.Move(velocity * Time.deltaTime);
+        characterController.Move(velocity * DeltaTime);
     }
 
     private void AimRotation()
@@ -160,12 +161,12 @@ public class PlayerMovementScript : MonoBehaviour
         
     }
 
-    private void CheckJumpHoldTimer(float deltaTime)
+    private void CheckJumpHoldTimer()
     {
         if (!jumping)
             return;
 
-        jumpHoldCurrent += deltaTime;
+        jumpHoldCurrent += DeltaTime;
 
         if (jumpHoldCurrent >= jumpHoldMax)
             EndJump();
@@ -195,6 +196,21 @@ public class PlayerMovementScript : MonoBehaviour
             this.transform.parent = otherObject.root;
         else
             this.transform.parent = null;
+    }
+
+    private float DeltaTime
+    { get { return Time.deltaTime / timeEffect; } }
+
+    public void TimeSlowMovementActive(float TimeSlowMultiplier)
+    {
+        this.timeEffect = TimeSlowMultiplier;
+        animator.speed = animator.speed / TimeSlowMultiplier;
+    }
+
+    public void TimeSlowMovementDeactive()
+    {
+        this.timeEffect = 1;
+        animator.speed = 1;
     }
 }
 

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject crosshairObject;
+
     private const string PLAYER_HUD_TAG = "PlayerHUD";
 
     private MagicManager magicManager;
@@ -11,7 +13,7 @@ public class UIManager : MonoBehaviour
     private Image playerPortrait;
     private RectTransform healthBar;
     private RectTransform focusBar;
-    private RectTransform crosshair;
+    private Transform crosshair;
     private Image readySpell;
     private RectTransform[] inputStringPanel;
 
@@ -22,9 +24,11 @@ public class UIManager : MonoBehaviour
         playerPortrait = UIExposer.playerPortrait.GetComponent<Image>();
         healthBar = UIExposer.healthBar;
         focusBar = UIExposer.focusBar;
-        crosshair = UIExposer.crosshair;
         readySpell = UIExposer.readySpell.GetComponent<Image>();
         magicManager = this.GetComponent<MagicManager>();
+        crosshair = Instantiate<GameObject>(crosshairObject).transform;
+
+        ToggleCrosshair(false);
     }
 
     // Update is called once per frame
@@ -43,6 +47,8 @@ public class UIManager : MonoBehaviour
     public void UISetPlayerPortrait()
     {
         //throw new NotImplementedException();
+        //If change in player health percentage (discrete states)
+        //Change portrait to injured face
     }
 
     public void UISetPlayerResources()

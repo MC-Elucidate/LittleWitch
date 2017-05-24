@@ -10,7 +10,6 @@ public class UIExposer : MonoBehaviour
     public RectTransform playerPortrait;
     public RectTransform healthBar;
     public RectTransform focusBar;
-    public RectTransform crosshair;
     public RectTransform readySpell;
     public RectTransform[] inputStringList;
 

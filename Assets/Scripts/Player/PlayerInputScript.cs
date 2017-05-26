@@ -29,6 +29,7 @@ public class PlayerInputScript : MonoBehaviour
         cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
         timeSlow = gameObject.GetComponent<TimeSlow>();
         RightTrigger = TriggerState.NotHeld;
+        HideCursor();
     }
 
     void Update()
@@ -141,6 +142,12 @@ public class PlayerInputScript : MonoBehaviour
             timeSlow.SlowTimeExcludePlayer();
         if (Input.GetButtonUp("TimeSlow"))
             timeSlow.ResumeTimeExcludePlayer();
+    }
+
+    private void HideCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
 }

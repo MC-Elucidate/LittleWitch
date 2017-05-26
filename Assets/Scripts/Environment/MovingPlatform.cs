@@ -9,14 +9,12 @@ public class MovingPlatform : MonoBehaviour {
     public int waitTime;
     private int currentIndex = 0;
     public bool isActive = true;
-
-	// Use this for initialization
+    
 	void Start () {
 		
 	}
 	
-	// Update is called once per frame
-	void FixedUpdate ()
+	void Update ()
     {
         if (points.Length == 0)
             return;

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldObject : MonoBehaviour {
-
-    public float Health;
+public abstract class ChemistryObject : MonoBehaviour {
+    
 
 	void Start () {
 		
@@ -14,7 +13,7 @@ public class WorldObject : MonoBehaviour {
 
     }
 
-    void OnCollisionEnter(Collision collision)
+   protected void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == Helpers.Tags.Spell)
         {
@@ -22,13 +21,13 @@ public class WorldObject : MonoBehaviour {
         }
     }
 
-    void SpellInteract(Spell spell)
+    protected void SpellInteract(Spell spell)
     {
         TakeDamage(spell.damage);
         ElementInteract(spell.element);
     }
 
-    void ElementInteract(Element element)
+    protected void ElementInteract(Element element)
     {
         switch (element)
         {
@@ -49,30 +48,13 @@ public class WorldObject : MonoBehaviour {
         }
     }
 
-    void FireInteraction()
-    {
-        print("My hair is on fire!");
-    }
+    protected abstract void FireInteraction();
 
-    void WaterInteraction()
-    {
-        print("Soaking wet!");
-    }
+    protected abstract void WaterInteraction();
 
-    void EarthInteraction()
-    {
-        print("Rock 'n' more rock!");
-    }
+    protected abstract void EarthInteraction();
 
-    void WindInteraction()
-    {
-        print("Quick as the wind!");
-    }
+    protected abstract void WindInteraction();
 
-    void TakeDamage(float damage)
-    {
-        Health -= damage;
-        if (Health <= 0)
-            Destroy(gameObject, 0f);
-    }
+    protected abstract void TakeDamage(float damage);
 }

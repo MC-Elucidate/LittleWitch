@@ -22,6 +22,7 @@ public class CameraScript : MonoBehaviour
 
     private Transform lookTarget;
     private CameraPositionPivotScript pivotTarget;
+    private PlayerStatus playerStatus;
     public Vector3 distanceFromTarget = new Vector3(0f, 0f, -4f);
 
     private const float PITCH_MAX_ANGLE = 45.0f;
@@ -31,11 +32,13 @@ public class CameraScript : MonoBehaviour
     {
         lookTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraFollowTarget).transform;
         pivotTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraPositionPivot).GetComponent<CameraPositionPivotScript>();
+        playerStatus = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).GetComponent<PlayerStatus>();
         state = CameraMode.Free;
     }
 
     void LateUpdate()
     {
+        SetCameraState();
         if (state == CameraMode.Free)
         {
             if (yawInput != 0)
@@ -58,9 +61,17 @@ public class CameraScript : MonoBehaviour
         transform.LookAt(lookTarget.position);
     }
 
-    public void EnterAimMode() { state = CameraMode.Aim; }
+    private void EnterAimMode() { if(state != CameraMode.Aim) state = CameraMode.Aim; }
 
-    public void LeaveAimMode() { state = CameraMode.Free; }
+    private void LeaveAimMode() { if (state != CameraMode.Free) state = CameraMode.Free; }
+
+    private void SetCameraState()
+    {
+        if (playerStatus.state == PlayerStatus.PlayerState.Aiming)
+            EnterAimMode();
+        else if (playerStatus.state == PlayerStatus.PlayerState.FreeMovement)
+            LeaveAimMode();
+    }
 
     private float DeltaTime
     { get { return Time.deltaTime / timeEffect; } }
@@ -68,10 +79,12 @@ public class CameraScript : MonoBehaviour
     public void TimeSlowMovementActive(float TimeSlowMultiplier)
     {
         this.timeEffect = TimeSlowMultiplier;
+        pivotTarget.SetTimeEffect(TimeSlowMultiplier);
     }
 
     public void TimeSlowMovementDeactive()
     {
         this.timeEffect = 1;
+        pivotTarget.SetTimeEffect(1);
     }
 }

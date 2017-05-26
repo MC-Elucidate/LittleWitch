@@ -23,25 +23,25 @@ public class TimeSlow : MonoBehaviour {
     {
         Time.timeScale = TimeSlowMultipler;
         Time.fixedDeltaTime = fixedDeltaTime * TimeSlowMultipler;
+        cameraScript.TimeSlowMovementActive(TimeSlowMultipler);
     }
 
     public void ResumeTime()
     {
         Time.timeScale = 1;
         Time.fixedDeltaTime = fixedDeltaTime;
+        cameraScript.TimeSlowMovementDeactive();
     }
 
     public void SlowTimeExcludePlayer()
     {
         SlowTime();
         playerMovement.TimeSlowMovementActive(TimeSlowMultipler);
-        cameraScript.TimeSlowMovementActive(TimeSlowMultipler);
     }
 
     public void ResumeTimeExcludePlayer()
     {
         ResumeTime();
         playerMovement.TimeSlowMovementDeactive();
-        cameraScript.TimeSlowMovementDeactive();
     }
 }

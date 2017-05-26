@@ -6,6 +6,7 @@ public class PlayerInputScript : MonoBehaviour
     PlayerMovementScript playerMovement;
     MagicManager magicManager;
     UIManager uiManager;
+    PlayerStatus playerStatus;
     CameraScript cameraScript;
     CameraPositionPivotScript cameraPivot;
     TimeSlow timeSlow;
@@ -28,6 +29,7 @@ public class PlayerInputScript : MonoBehaviour
         cameraScript = Camera.main.GetComponent<CameraScript>();
         cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
         timeSlow = gameObject.GetComponent<TimeSlow>();
+        playerStatus = gameObject.GetComponent<PlayerStatus>();
         RightTrigger = TriggerState.NotHeld;
         HideCursor();
     }
@@ -112,7 +114,7 @@ public class PlayerInputScript : MonoBehaviour
         {
             cameraPivot.ResetPosition();
             magicManager.ClearInputs();
-            cameraScript.EnterAimMode();
+            playerStatus.EnterAimMode();
             timeSlow.SlowTime();
             uiManager.ToggleCrosshair(true);
             Debug.Log("Aiming!");
@@ -120,7 +122,7 @@ public class PlayerInputScript : MonoBehaviour
         if (Input.GetButtonUp("Aim") || RightTrigger == TriggerState.Released)
         {
             magicManager.CastSpell();
-            cameraScript.LeaveAimMode();
+            playerStatus.LeaveAimMode();
             timeSlow.ResumeTime();
             uiManager.ToggleCrosshair(false);
             Debug.Log("Not Aiming anymore. Cast!");

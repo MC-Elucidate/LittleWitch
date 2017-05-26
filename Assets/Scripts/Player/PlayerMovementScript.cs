@@ -8,7 +8,7 @@ public class PlayerMovementScript : MonoBehaviour
     //Private GameObjects
     private Animator animator;
     private CharacterController characterController;
-    private CameraScript cameraScript;
+    private PlayerStatus playerStatus;
     public Transform cameraTransform;
 
     //Movement variables
@@ -54,7 +54,7 @@ public class PlayerMovementScript : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
-        cameraScript = Camera.main.GetComponent<CameraScript>();
+        playerStatus = gameObject.GetComponent<PlayerStatus>();
         locomotionHashID = Animator.StringToHash("Base Layer.Locomotion");
         pivotLeftHashID = Animator.StringToHash("Base Layer.LocomotionPivotLeft");
         pivotRightHashID = Animator.StringToHash("Base Layer.LocomotionPivotRight");
@@ -74,7 +74,7 @@ public class PlayerMovementScript : MonoBehaviour
     void UpdateMovement()
     {
         Vector3 movementVector;
-        if (cameraScript.state == CameraScript.CameraMode.Aim)
+        if (playerStatus.state == PlayerStatus.PlayerState.Aiming)
             movementVector = new Vector3(0, 0, 0);
 
         else
@@ -115,11 +115,11 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void AimRotation()
     {
-        if (cameraScript.state != CameraScript.CameraMode.Aim)
+        if (playerStatus.state != PlayerStatus.PlayerState.Aiming)
             return;
 
         if (yawInput != 0)
-            transform.Rotate(new Vector3(0, Time.deltaTime * yawInput, 0));
+            transform.Rotate(new Vector3(0, (Time.deltaTime/Time.timeScale) * yawInput, 0));
     }
 
     public void Jump()

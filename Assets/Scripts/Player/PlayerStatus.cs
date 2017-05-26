@@ -9,10 +9,18 @@ public class PlayerStatus : MonoBehaviour {
     public const int MaxMana = 100;
     public int Health = 3;
     public int Mana = 100;
+    public PlayerState state;
     private Checkpoint checkpoint;
+
+    public enum PlayerState
+    {
+        FreeMovement,
+        Aiming,
+        Dead
+    }
  
     void Start () {
-		
+        state = PlayerState.FreeMovement;
 	}
 	
 	void Update () {
@@ -49,4 +57,8 @@ public class PlayerStatus : MonoBehaviour {
         Health = MaxHealth;
         transform.position = checkpoint.transform.position;
     }
+
+    public void EnterAimMode() { state = PlayerState.Aiming; }
+
+    public void LeaveAimMode() { state = PlayerState.FreeMovement; }
 }

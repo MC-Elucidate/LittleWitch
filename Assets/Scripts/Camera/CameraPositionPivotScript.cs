@@ -7,6 +7,7 @@ public class CameraPositionPivotScript : MonoBehaviour {
     public float pitchInput = 0;
     public float pitchMaxAngle = 45;
     public float pitchMinAngle = -10;
+    private float timeEffect = 1;
     private CameraPositionTargetScript cameraPositionTarget;
 
     void Start () {
@@ -19,7 +20,7 @@ public class CameraPositionPivotScript : MonoBehaviour {
         {
             Vector3 objRotation = transform.rotation.eulerAngles;
             float oldPitch = objRotation.x > 180 ? objRotation.x - 360 : objRotation.x;
-            float newPitch = oldPitch + (pitchInput * Time.deltaTime);
+            float newPitch = oldPitch + (pitchInput * Time.deltaTime/timeEffect);
             float clampedPitch = Mathf.Clamp(newPitch, pitchMinAngle, pitchMaxAngle);
             transform.localEulerAngles = new Vector3(clampedPitch, 0, 0);
         }
@@ -34,5 +35,10 @@ public class CameraPositionPivotScript : MonoBehaviour {
     public Vector3 GetTagetPosition()
     {
         return cameraPositionTarget.GetTargetPosition();
+    }
+
+    public void SetTimeEffect(float time)
+    {
+        timeEffect = time;
     }
 }

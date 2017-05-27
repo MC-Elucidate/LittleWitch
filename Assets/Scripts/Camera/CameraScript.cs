@@ -38,7 +38,6 @@ public class CameraScript : MonoBehaviour
 
     void LateUpdate()
     {
-        SetCameraState();
         if (state == CameraMode.Free)
         {
             if (yawInput != 0)
@@ -65,7 +64,7 @@ public class CameraScript : MonoBehaviour
 
     private void LeaveAimMode() { if (state != CameraMode.Free) state = CameraMode.Free; }
 
-    private void SetCameraState()
+    public void SetCameraState()
     {
         if (playerStatus.state == PlayerStatus.PlayerState.Aiming)
             EnterAimMode();

@@ -9,6 +9,7 @@ public static class Helpers {
         public const string MovingPlatform = "MovingPlatform";
         public const string Spell = "Spell";
         public const string Player = "Player";
+        public const string PlayerHUD = "PlayerHUD";
     }
 
     public static GameObject FindObjectInChildren(this GameObject gameObject, string gameObjectName)

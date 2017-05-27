@@ -115,6 +115,7 @@ public class PlayerInputScript : MonoBehaviour
             cameraPivot.ResetPosition();
             magicManager.ClearInputs();
             playerStatus.EnterAimMode();
+            cameraScript.SetCameraState();
             timeSlow.SlowTime();
             uiManager.ToggleCrosshair(true);
             Debug.Log("Aiming!");
@@ -123,6 +124,7 @@ public class PlayerInputScript : MonoBehaviour
         {
             magicManager.CastSpell();
             playerStatus.LeaveAimMode();
+            cameraScript.SetCameraState();
             timeSlow.ResumeTime();
             uiManager.ToggleCrosshair(false);
             Debug.Log("Not Aiming anymore. Cast!");

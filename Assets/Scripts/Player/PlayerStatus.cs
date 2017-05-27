@@ -32,27 +32,14 @@ public class PlayerStatus : MonoBehaviour {
         Respawn();
     }
 
-    public void BumpedEnemy()
-    {
-        TakeDamage(1);
-    }
-
     public void CheckpointTouched(Checkpoint checkpoint)
     {
         if(this.checkpoint != null)
             this.checkpoint.SetInactive();
         this.checkpoint = checkpoint;
     }
-
-    public void TakeDamage(int damage)
-    {
-        print("ouch");
-        Health -= damage;
-        if (Health <= 0)
-            Respawn();
-    }
-
-    private void Respawn()
+    
+    public void Respawn()
     {
         Health = MaxHealth;
         transform.position = checkpoint.transform.position;
@@ -61,4 +48,5 @@ public class PlayerStatus : MonoBehaviour {
     public void EnterAimMode() { state = PlayerState.Aiming; }
 
     public void LeaveAimMode() { state = PlayerState.FreeMovement; }
+    
 }

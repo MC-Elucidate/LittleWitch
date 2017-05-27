@@ -20,7 +20,7 @@ public class EnemyBumpTrigger : MonoBehaviour {
             return;
         if (collider.gameObject.tag == Helpers.Tags.Player)
         {
-            collider.gameObject.GetComponent<PlayerStatus>().BumpedEnemy();
+            collider.gameObject.GetComponent<PlayerDamageManager>().BumpedEnemy();
         }
     }
 }

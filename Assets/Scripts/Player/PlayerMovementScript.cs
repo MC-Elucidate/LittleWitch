@@ -193,7 +193,7 @@ public class PlayerMovementScript : MonoBehaviour
     private void ParentToObject(Transform otherObject)
     {
         if (otherObject.root.tag == Helpers.Tags.MovingPlatform)
-            this.transform.parent = otherObject.root;
+            this.transform.parent = otherObject;
         else
             this.transform.parent = null;
     }

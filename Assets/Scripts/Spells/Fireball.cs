@@ -4,12 +4,14 @@ using UnityEngine;
 [Serializable]
 public class Fireball : Spell
 {
+    public Transform explosionPrefab;
+
     void Start()
     {
-        
+        base.Start();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         this.MoveProjectile();
     }
@@ -17,6 +19,7 @@ public class Fireball : Spell
     public override void Trigger()
     {
         Debug.Log("Destroyed " + this.name);
+        //Instantiate(explosionPrefab);
         Destroy(this.gameObject);
     }
 

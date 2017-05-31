@@ -13,7 +13,16 @@ public abstract class Spell: MonoBehaviour
     public float aoe;
     public float speed;
 
+    public Transform castEffectPrefab;
+
     private float totalDistanceTravelled = 0f;
+    private Rigidbody rigidbody;
+
+    public virtual void Start()
+    {
+        this.rigidbody = this.transform.GetComponent<Rigidbody>();
+        Instantiate(castEffectPrefab, this.transform.position, this.transform.rotation);
+    }
 
     //How the spell affects the world
     public virtual void Trigger()
@@ -28,7 +37,7 @@ public abstract class Spell: MonoBehaviour
             this.transform.DebugDirectionRay();
             var distanceToTravel = transform.forward * speed * Time.deltaTime;
             totalDistanceTravelled += distanceToTravel.magnitude;
-            this.transform.position += distanceToTravel;
+            this.rigidbody.MovePosition(this.transform.position += distanceToTravel);
 
             if (totalDistanceTravelled >= range)
                 Destroy(this.gameObject);

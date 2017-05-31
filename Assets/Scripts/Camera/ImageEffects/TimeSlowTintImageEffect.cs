@@ -8,12 +8,14 @@ public class TimeSlowTintImageEffect : MonoBehaviour {
 
     void Start()
     {
-
+        TintMaterial.color = TintMaterial.color;
     }
 
     void OnRenderImage(RenderTexture src, RenderTexture dst)
     {
-        //if (TintMaterial != null)
-        //    Graphics.Blit(src, dst, TintMaterial);
+        if (TintMaterial != null)
+        {
+            Graphics.Blit(src, dst, TintMaterial);
+        }
     }
 }

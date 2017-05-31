@@ -10,6 +10,8 @@ public class PlayerDamageManager : MonoBehaviour {
     public float flashRate = 0.1f;
     public Material material;
     private PlayerStatus status;
+    private Color defaultColor = Color.white;
+    public Color flashColor = Color.red;
 
     private enum Vulnerability
     {
@@ -18,6 +20,8 @@ public class PlayerDamageManager : MonoBehaviour {
     }
     void Start () {
         status = gameObject.GetComponent<PlayerStatus>();
+        vulnerability = Vulnerability.Vulnerable;
+        material.color = defaultColor;
 	}
 	
 	void Update () {
@@ -59,9 +63,9 @@ public class PlayerDamageManager : MonoBehaviour {
     {
         while (vulnerability == Vulnerability.Invulnerable)
         {
-            material.color = Color.red;
+            material.color = flashColor;
             yield return new WaitForSecondsRealtime(flashRate);
-            material.color = Color.white;
+            material.color = defaultColor;
             yield return new WaitForSecondsRealtime(flashRate);
         }
 

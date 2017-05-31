@@ -11,13 +11,11 @@ public class DummyEnemyStatus : EnemyBase {
     }
 
     private AIState state;
-
-    // Use this for initialization
+    
     void Start () {
         state = AIState.Idle;
     }
-
-    // Update is called once per frame
+    
     void Update () {
 		
 	}

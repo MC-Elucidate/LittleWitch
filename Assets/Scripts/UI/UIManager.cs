@@ -60,10 +60,10 @@ public class UIManager : MonoBehaviour
             this.healthBar.offsetMax = Vector2.zero;
             this.healthBar.offsetMin = Vector2.zero;
         }
-        if (playerStatus.Mana != playerMana)
+        if (playerStatus.Focus != playerMana)
         {
-            playerMana = playerStatus.Mana;
-            this.focusBar.anchorMax = new Vector2((float)playerStatus.Mana / PlayerStatus.MaxMana, 1f);
+            playerMana = (int)playerStatus.Focus;
+            this.focusBar.anchorMax = new Vector2((float)playerStatus.Focus / PlayerStatus.MaxFocus, 1f);
             this.focusBar.offsetMax = Vector2.zero;
             this.focusBar.offsetMin = Vector2.zero;
         }

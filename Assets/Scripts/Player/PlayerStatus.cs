@@ -6,9 +6,9 @@ using UnityEngine;
 public class PlayerStatus : MonoBehaviour {
 
     public const int MaxHealth = 3;
-    public const int MaxMana = 100;
+    public const int MaxFocus = 100;
     public int Health = 3;
-    public int Mana = 100;
+    public float Focus = 100;
     public PlayerState state;
     private Checkpoint checkpoint;
 
@@ -48,5 +48,27 @@ public class PlayerStatus : MonoBehaviour {
     public void EnterAimMode() { state = PlayerState.Aiming; }
 
     public void LeaveAimMode() { state = PlayerState.FreeMovement; }
+
+    public bool UseFocus(float amount)
+    {
+        if (amount <= Focus)
+        {
+            Focus -= amount;
+            if (Focus < 0)
+                Focus = 0;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void RegenFocus(float amount)
+    {
+        Focus += amount;
+        if (Focus > MaxFocus)
+            Focus = MaxFocus;
+    }
     
 }

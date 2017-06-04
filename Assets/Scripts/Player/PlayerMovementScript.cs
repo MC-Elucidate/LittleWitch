@@ -5,10 +5,11 @@ using UnityEngine;
 public class PlayerMovementScript : MonoBehaviour
 {
 
-    //Private GameObjects
+    //GameObjects
     private Animator animator;
     private CharacterController characterController;
     private PlayerStatus playerStatus;
+    private PlayerSoundManager sounds;
     public Transform cameraTransform;
 
     //Movement variables
@@ -55,6 +56,7 @@ public class PlayerMovementScript : MonoBehaviour
         characterController = gameObject.GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
         playerStatus = gameObject.GetComponent<PlayerStatus>();
+        sounds = gameObject.GetComponent<PlayerSoundManager>();
         locomotionHashID = Animator.StringToHash("Base Layer.Locomotion");
         pivotLeftHashID = Animator.StringToHash("Base Layer.LocomotionPivotLeft");
         pivotRightHashID = Animator.StringToHash("Base Layer.LocomotionPivotRight");
@@ -128,6 +130,7 @@ public class PlayerMovementScript : MonoBehaviour
         {
             jumping = true;
             velocity.y = jumpPower;
+            sounds.PlayJumpSound();
         }
     }
 

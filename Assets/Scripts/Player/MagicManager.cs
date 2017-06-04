@@ -16,6 +16,7 @@ public class MagicManager : MonoBehaviour
     private Transform spellSource;
     private Transform cameraTransform;
     private float lastInputTime = 0f;
+    private PlayerSoundManager sounds;
 
     public void Start()
     {
@@ -23,6 +24,7 @@ public class MagicManager : MonoBehaviour
         inputString = new StringBuilder();
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;
         cameraTransform = Camera.main.transform;
+        sounds = gameObject.GetComponent<PlayerSoundManager>();
         uiManager.UISetReadySpellIcon();
     }
 
@@ -38,6 +40,7 @@ public class MagicManager : MonoBehaviour
         if (readySpellPrefab != null)
         {
             GameObject.Instantiate(readySpellPrefab, spellSource.position, cameraTransform.rotation);
+            sounds.PlayFireSpellSound();
             readySpellPrefab = null;
             uiManager.UISetReadySpellIcon();
         }

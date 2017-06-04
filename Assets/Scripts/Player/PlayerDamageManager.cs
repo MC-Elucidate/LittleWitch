@@ -12,6 +12,7 @@ public class PlayerDamageManager : MonoBehaviour {
     private PlayerStatus status;
     private Color defaultColor = Color.white;
     public Color flashColor = Color.red;
+    private PlayerSoundManager sounds;
 
     private enum Vulnerability
     {
@@ -22,6 +23,7 @@ public class PlayerDamageManager : MonoBehaviour {
         status = gameObject.GetComponent<PlayerStatus>();
         vulnerability = Vulnerability.Vulnerable;
         material.color = defaultColor;
+        sounds = gameObject.GetComponent<PlayerSoundManager>();
 	}
 	
 	void Update () {
@@ -38,7 +40,7 @@ public class PlayerDamageManager : MonoBehaviour {
         if (vulnerability == Vulnerability.Invulnerable)
             return;
 
-        print("ouch");
+        sounds.PlayDamageReceivedSound();
         status.Health -= damage;
         if (status.Health <= 0)
             status.Respawn();

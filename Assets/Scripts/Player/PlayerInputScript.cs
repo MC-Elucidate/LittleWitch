@@ -9,7 +9,7 @@ public class PlayerInputScript : MonoBehaviour
     PlayerStatus playerStatus;
     CameraScript cameraScript;
     CameraPositionPivotScript cameraPivot;
-    TimeSlow timeSlow;
+    TimeSlowManager timeSlow;
 
     private enum TriggerState
     {
@@ -28,7 +28,7 @@ public class PlayerInputScript : MonoBehaviour
         uiManager = gameObject.GetComponent<UIManager>();
         cameraScript = Camera.main.GetComponent<CameraScript>();
         cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
-        timeSlow = gameObject.GetComponent<TimeSlow>();
+        timeSlow = gameObject.GetComponent<TimeSlowManager>();
         playerStatus = gameObject.GetComponent<PlayerStatus>();
         RightTrigger = TriggerState.NotHeld;
         HideCursor();

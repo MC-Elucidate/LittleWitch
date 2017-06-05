@@ -196,7 +196,17 @@ public class PlayerMovementScript : MonoBehaviour
     private void ParentToObject(Transform otherObject)
     {
         if (otherObject.root.tag == Helpers.Tags.MovingPlatform)
+        {
             this.transform.parent = otherObject;
+            try
+            {
+                otherObject.root.GetComponentInChildren<Platform>().StoodOn();
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log("Something went wrong calling StoodOn()");
+            }
+        }
         else
             this.transform.parent = null;
     }

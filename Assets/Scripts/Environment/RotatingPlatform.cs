@@ -1,21 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-public class RotatingPlatform : MonoBehaviour {
+public class RotatingPlatform : Platform {
 
-    public float rotationSpeed = 0;
+    public float duration;
 
-	void Start ()
+    void Start ()
     {
 
 	}
 	
 	void Update ()
     {
-        this.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        this.transform.Rotate(Vector3.up, 360 / duration * Time.smoothDeltaTime);
 
+        //Rotate children around themselves
         foreach (Transform child in this.transform)
-            child.transform.Rotate(Vector3.up, -rotationSpeed * Time.deltaTime);
+            child.transform.Rotate(Vector3.up, -360 / duration * Time.smoothDeltaTime);
+    }
+
+    protected override void StoodOnDropPlatform()
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void StoodOnMovePlatform()
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void StoodOnSpringTrap()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void Activate()
+    {
+        this.gameObject.SetActive(true);
+        markedForDeactivate = false;
+    }
+
+    private void Deactivate()
+    {
+        this.gameObject.SetActive(false);
     }
 }

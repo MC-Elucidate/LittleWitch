@@ -12,12 +12,10 @@ public abstract class Platform : MonoBehaviour
 
     public Trap[] trapComponents;
 
-    // Use this for initialization
     void Start () {
 		
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		
 	}
@@ -26,7 +24,7 @@ public abstract class Platform : MonoBehaviour
     {
         switch (platformType)
         {
-            case PlatformType.Trap:
+            case PlatformType.Trigger:
                 StoodOnSpringTrap();
                 break;
             case PlatformType.Drop:
@@ -44,5 +42,5 @@ public abstract class Platform : MonoBehaviour
 
     protected abstract void StoodOnMovePlatform();
 
-    public enum PlatformType { Trap, Drop, Move, None }
+    public enum PlatformType { Trigger, Drop, Move, None }
 }

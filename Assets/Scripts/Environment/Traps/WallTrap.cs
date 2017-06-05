@@ -8,19 +8,16 @@ public class WallTrap : Trap
     public Vector3[] wallPieceTranslation;
     public TrapCondition trapCondition;
 
-    //We need conditions over here - Time before it resets, enemies to kill, etc
-    public float trapResetTime;
+    public float trapDuration;
     public GameObject[] enemiesToKill;
 
     private float currentTrapTime = 0f;
 
-    // Use this for initialization
     void Start ()
     {
 		
 	}
 	
-	// Update is called once per frame
 	void Update ()
     {
         if (trapSprung)
@@ -30,7 +27,7 @@ public class WallTrap : Trap
             if (trapCondition == TrapCondition.Timer)
             {
                 currentTrapTime += Time.deltaTime;
-                if (currentTrapTime >= trapResetTime)
+                if (currentTrapTime >= trapDuration)
                 {
                     ResetTrap();
                 }
@@ -50,7 +47,7 @@ public class WallTrap : Trap
 
     public override void SpringTrap()
     {
-        if (!trapSprung && !trapCleared)
+        if (!trapSprung && !trapCleared && !trapWaitingForReset)
         {
             Debug.Log("Trap is Sprung!");
 
@@ -83,7 +80,15 @@ public class WallTrap : Trap
 
             if (!trapCanRetrigger)
                 trapCleared = true;
+
+            trapWaitingForReset = true;
+            Invoke("WaitAfterReset", trapResetDelay);
         }
+    }
+
+    private void WaitAfterReset()
+    {
+        trapWaitingForReset = false;
     }
 
     public enum TrapCondition { Timer, Enemies }

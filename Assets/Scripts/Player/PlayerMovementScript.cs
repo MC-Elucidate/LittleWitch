@@ -202,7 +202,7 @@ public class PlayerMovementScript : MonoBehaviour
             {
                 otherObject.root.GetComponentInChildren<Platform>().StoodOn();
             }
-            catch (System.Exception e)
+            catch (System.Exception)
             {
                 Debug.Log("Something went wrong calling StoodOn()");
             }

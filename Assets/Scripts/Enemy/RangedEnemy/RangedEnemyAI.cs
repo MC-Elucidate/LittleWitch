@@ -74,7 +74,8 @@ public class RangedEnemyAI : MonoBehaviour {
     private void Shoot()
     {
         lastShotTime = FireRate;
-        GameObject.Instantiate(ProjectilePrefab, spellSource.position, Quaternion.LookRotation(player.position - spellSource.position));
+        var playerCentrePosition = (player.position + new Vector3(0, player.GetComponent<CharacterController>().height / 2, 0));
+        GameObject.Instantiate(ProjectilePrefab, spellSource.position, Quaternion.LookRotation(playerCentrePosition - spellSource.position));
         sounds.PlayFireSpellSound();
     }
 }

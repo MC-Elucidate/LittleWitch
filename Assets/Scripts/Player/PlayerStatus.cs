@@ -9,6 +9,7 @@ public class PlayerStatus : MonoBehaviour {
     public const int MaxFocus = 100;
     public int Health = 3;
     public float Focus = 100;
+    public int Gems = 0;
     public PlayerState state;
     private Checkpoint checkpoint;
 
@@ -69,6 +70,11 @@ public class PlayerStatus : MonoBehaviour {
         Focus += amount;
         if (Focus > MaxFocus)
             Focus = MaxFocus;
+    }
+
+    public void AddGems(int amount)
+    {
+        Gems += amount;
     }
     
 }

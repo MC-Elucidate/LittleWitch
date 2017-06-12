@@ -1,17 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EnemyBumpTrigger : MonoBehaviour {
+public class BumpEnemyTrigger : MonoBehaviour {
 
-    private BumpEnemyStatus status;
+    private EnemyBaseStatus status;
 
-    void Start () {
-        status = gameObject.GetComponent<BumpEnemyStatus>();
-	}
-	
-	void Update () {
-		
+    void Start ()
+    {
+        status = gameObject.GetComponent<EnemyBaseStatus>();
 	}
 
     void OnTriggerEnter(Collider collider)

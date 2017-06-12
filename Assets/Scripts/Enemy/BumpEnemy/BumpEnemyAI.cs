@@ -5,13 +5,13 @@ using UnityEngine.AI;
 
 public class BumpEnemyAI : MonoBehaviour {
 
-    private BumpEnemyStatus status;
+    private EnemyBaseStatus status;
     private NavMeshAgent navAgent;
     private Transform player;
     public float AggroDistance;
 
 	void Start () {
-        status = gameObject.GetComponent<BumpEnemyStatus>();
+        status = gameObject.GetComponent<EnemyBaseStatus>();
         navAgent = gameObject.GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).transform;
         navAgent.Stop();

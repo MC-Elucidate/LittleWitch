@@ -10,16 +10,14 @@ public class RangedEnemyAI : MonoBehaviour {
     public Transform ProjectilePrefab;
     public float FireRate;
 
-    private RangedEnemyStatus status;
-    private EnemySoundManager sounds;
+    private EnemyBaseStatus status;
     private NavMeshAgent navAgent;
     private Transform player;
     private Transform spellSource;
     private float lastShotTime;
 
 	void Start () {
-        status = gameObject.GetComponent<RangedEnemyStatus>();
-        sounds = gameObject.GetComponent<EnemySoundManager>();
+        status = gameObject.GetComponent<EnemyBaseStatus>();
         navAgent = gameObject.GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).transform;
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;
@@ -49,12 +47,10 @@ public class RangedEnemyAI : MonoBehaviour {
 
     void Aggro()
     {
-        //navAgent.SetDestination(player.position);
         if (status.IsDead() || status.IsAggro())
             return;
 
         status.AggroOnPlayer();
-        //navAgent.Resume();
     }
 
     void DeAggro()
@@ -63,7 +59,6 @@ public class RangedEnemyAI : MonoBehaviour {
             return;
 
         status.BecomeIdle();
-        //navAgent.Stop();
     }
 
     void Die()
@@ -76,6 +71,5 @@ public class RangedEnemyAI : MonoBehaviour {
         lastShotTime = FireRate;
         var playerCentrePosition = (player.position + new Vector3(0, player.GetComponent<CharacterController>().height / 2, 0));
         GameObject.Instantiate(ProjectilePrefab, spellSource.position, Quaternion.LookRotation(playerCentrePosition - spellSource.position));
-        sounds.PlayFireSpellSound();
     }
 }

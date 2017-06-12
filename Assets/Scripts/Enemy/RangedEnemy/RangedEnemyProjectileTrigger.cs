@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class EnemyProjectileTrigger : MonoBehaviour
+public class RangedEnemyProjectileTrigger : MonoBehaviour
 {
     void OnTriggerEnter(Collider collider)
     {

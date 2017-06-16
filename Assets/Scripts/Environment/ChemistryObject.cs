@@ -23,8 +23,13 @@ public abstract class ChemistryObject : MonoBehaviour {
 
     protected void SpellInteract(Spell spell)
     {
-        TakeDamage(spell.damage);
-        ElementInteract(spell.element);
+        ChemistryInteraction(spell.damage, spell.element);
+    }
+
+    public void ChemistryInteraction(float damage, Element element)
+    {
+        ElementInteract(element);
+        TakeDamage(damage);
     }
 
     protected void ElementInteract(Element element)

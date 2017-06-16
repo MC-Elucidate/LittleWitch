@@ -49,6 +49,14 @@ public class TimeSlowManager : MonoBehaviour {
             playerStatus.RegenFocus(FocusRegenPerSecond * Time.deltaTime / Time.timeScale);
     }
 
+    public void Trigger()
+    {
+        if (TimeSlowActive)
+            ResumeTimeExcludePlayer();
+        else
+            SlowTimeExcludePlayer();
+    }
+
     public void SlowTime()
     {
         Time.timeScale = TimeSlowMultipler;

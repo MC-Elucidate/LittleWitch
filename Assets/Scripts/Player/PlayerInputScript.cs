@@ -116,7 +116,6 @@ public class PlayerInputScript : MonoBehaviour
             magicManager.ClearInputs();
             playerStatus.EnterAimMode();
             cameraScript.SetCameraState();
-            timeSlow.SlowTime();
             uiManager.ToggleCrosshair(true);
             Debug.Log("Aiming!");
         }
@@ -125,7 +124,6 @@ public class PlayerInputScript : MonoBehaviour
             magicManager.CastSpell();
             playerStatus.LeaveAimMode();
             cameraScript.SetCameraState();
-            timeSlow.ResumeTime();
             uiManager.ToggleCrosshair(false);
             Debug.Log("Not Aiming anymore. Cast!");
         }
@@ -143,9 +141,7 @@ public class PlayerInputScript : MonoBehaviour
     void TimeInput()
     {
         if (Input.GetButtonDown("TimeSlow"))
-            timeSlow.SlowTimeExcludePlayer();
-        if (Input.GetButtonUp("TimeSlow"))
-            timeSlow.ResumeTimeExcludePlayer();
+            timeSlow.Trigger();
     }
 
     private void HideCursor()

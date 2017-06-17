@@ -51,6 +51,24 @@ public class MagicManager : MonoBehaviour
         }
     }
 
+    public void CastSpellOnTarget(GameObject target)
+    {
+        //Casting logic and animations go over here probably
+        if (readySpellPrefab != null)
+        {
+            Quaternion travelDirection = Quaternion.LookRotation(target.transform.position - spellSource.position);
+            GameObject.Instantiate(readySpellPrefab, spellSource.position, travelDirection);
+            sounds.PlayFireSpellSound();
+            readySpellPrefab = null;
+            uiManager.UISetReadySpellIcon();
+        }
+        else
+        {
+            Debug.Log("No spell is ready");
+            //Play no magic spell sound
+        }
+    }
+
     public void AddToInputString(int element)
     {
         lastInputTime = 0f;

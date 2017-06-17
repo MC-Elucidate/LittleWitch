@@ -10,6 +10,7 @@ public class PlayerInputScript : MonoBehaviour
     CameraScript cameraScript;
     CameraPositionPivotScript cameraPivot;
     TimeSlowManager timeSlow;
+    LockOnManager lockOn;
 
     private enum TriggerState
     {
@@ -30,6 +31,7 @@ public class PlayerInputScript : MonoBehaviour
         cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
         timeSlow = gameObject.GetComponent<TimeSlowManager>();
         playerStatus = gameObject.GetComponent<PlayerStatus>();
+        lockOn = gameObject.GetComponent<LockOnManager>();
         RightTrigger = TriggerState.NotHeld;
         HideCursor();
     }
@@ -46,6 +48,7 @@ public class PlayerInputScript : MonoBehaviour
         MovementInput();
         CameraInput();
         AimInput();
+        LockOnInput();
         SpellInput();
         TimeInput();
     }
@@ -117,7 +120,6 @@ public class PlayerInputScript : MonoBehaviour
             playerStatus.EnterAimMode();
             cameraScript.SetCameraState();
             uiManager.ToggleCrosshair(true);
-            Debug.Log("Aiming!");
         }
         if (Input.GetButtonUp("Aim") || RightTrigger == TriggerState.Released)
         {
@@ -125,7 +127,20 @@ public class PlayerInputScript : MonoBehaviour
             playerStatus.LeaveAimMode();
             cameraScript.SetCameraState();
             uiManager.ToggleCrosshair(false);
-            Debug.Log("Not Aiming anymore. Cast!");
+        }
+    }
+
+    void LockOnInput()
+    {
+        if (Input.GetButtonDown("LockOn"))
+        {
+            cameraPivot.ResetPosition();
+            magicManager.ClearInputs();
+            lockOn.LockOnPressed();
+        }
+        if (Input.GetButtonUp("LockOn"))
+        {
+            lockOn.LockOnReleased();
         }
     }
 

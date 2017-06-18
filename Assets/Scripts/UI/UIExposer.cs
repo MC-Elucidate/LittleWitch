@@ -12,16 +12,5 @@ public class UIExposer : MonoBehaviour
     public RectTransform focusBar;
     public RectTransform readySpell;
     public RectTransform[] inputStringList;
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    public RectTransform GemsCounter;
 }

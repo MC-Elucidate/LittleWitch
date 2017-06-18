@@ -15,8 +15,9 @@ public class UIManager : MonoBehaviour
     private Transform crosshair;
     private Image readySpell;
     private RectTransform[] inputStringPanel;
+    private Text gemsText;
 
-    private int playerHealth = 0, playerMana = 0;
+    private int playerHealth = 0, playerMana = 0, gems = 0;
 
     void Start()
     {
@@ -28,6 +29,7 @@ public class UIManager : MonoBehaviour
         magicManager = this.GetComponent<MagicManager>();
         playerStatus = this.GetComponent<PlayerStatus>();
         crosshair = Instantiate<GameObject>(crosshairObject).transform;
+        gemsText = UIExposer.GemsCounter.GetComponent<Text>();
 
         ToggleCrosshair(false);
     }
@@ -66,6 +68,11 @@ public class UIManager : MonoBehaviour
             this.focusBar.anchorMax = new Vector2((float)playerStatus.Focus / PlayerStatus.MaxFocus, 1f);
             this.focusBar.offsetMax = Vector2.zero;
             this.focusBar.offsetMin = Vector2.zero;
+        }
+        if (playerStatus.Gems != gems)
+        {
+            gems = playerStatus.Gems;
+            gemsText.text = gems.ToString();
         }
         //for (int i = 0; i > Hearts; i++)
         //{

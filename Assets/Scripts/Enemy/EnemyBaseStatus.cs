@@ -13,6 +13,7 @@ public class EnemyBaseStatus : ChemistryObject {
 		
 	}
 
+    #region SpellInteractions
     protected override void FireInteraction()
     {
         print("My hair is on fire!");
@@ -32,7 +33,9 @@ public class EnemyBaseStatus : ChemistryObject {
     {
         print("Quick as the wind!");
     }
+    #endregion
 
+    #region HealthState
     protected override void TakeDamage(float damage)
     {
         Health -= damage;
@@ -45,7 +48,9 @@ public class EnemyBaseStatus : ChemistryObject {
         state = AIState.Dead;
         Destroy(gameObject, 1.5f);
     }
+    #endregion
 
+    #region AILogic
     public bool IsDead()
     {
         return state == AIState.Dead;
@@ -70,6 +75,7 @@ public class EnemyBaseStatus : ChemistryObject {
     {
         state = AIState.Idle;
     }
+    #endregion
 
     private enum AIState
     {

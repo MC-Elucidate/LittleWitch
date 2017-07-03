@@ -10,7 +10,7 @@ public class UIManager : MonoBehaviour
     private PlayerStatus playerStatus;
 
     private Image playerPortrait;
-    private RectTransform healthBar;
+    private RectTransform heartsPanel;
     private RectTransform focusBar;
     private Transform crosshair;
     private Image readySpell;
@@ -22,14 +22,14 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         var UIExposer = GameObject.FindGameObjectWithTag(Helpers.Tags.PlayerHUD).GetComponent<UIExposer>();
-        playerPortrait = UIExposer.playerPortrait.GetComponent<Image>();
-        healthBar = UIExposer.healthBar;
-        focusBar = UIExposer.focusBar;
-        readySpell = UIExposer.readySpell.GetComponent<Image>();
+        playerPortrait = UIExposer.PlayerPortrait.GetComponent<Image>();
+        heartsPanel = UIExposer.PlayerHeartsPanel;
+        focusBar = UIExposer.PlayerFocusBar;
+        readySpell = UIExposer.PlayerReadySpell.GetComponent<Image>();
         magicManager = this.GetComponent<MagicManager>();
         playerStatus = this.GetComponent<PlayerStatus>();
         crosshair = Instantiate<GameObject>(crosshairObject).transform;
-        gemsText = UIExposer.GemsCounter.GetComponent<Text>();
+        gemsText = UIExposer.PlayerGemsCounter.GetComponent<Text>();
 
         ToggleCrosshair(false);
     }
@@ -58,29 +58,29 @@ public class UIManager : MonoBehaviour
         if (playerStatus.Health != playerHealth)
         {
             playerHealth = playerStatus.Health;
-            this.healthBar.anchorMax = new Vector2((float)playerStatus.Health / PlayerStatus.MaxHealth, 1f);
-            this.healthBar.offsetMax = Vector2.zero;
-            this.healthBar.offsetMin = Vector2.zero;
+
+            for (int heartCount = 0; heartCount < heartsPanel.childCount; heartCount++)
+            {
+                var currentHeart = heartsPanel.GetChild(heartCount).gameObject;
+
+                if ((heartCount + 1) <= playerStatus.Health)
+                    currentHeart.SetActive(true);
+                else
+                    currentHeart.SetActive(false);
+            }
         }
+
         if (playerStatus.Focus != playerMana)
         {
             playerMana = (int)playerStatus.Focus;
-            this.focusBar.anchorMax = new Vector2((float)playerStatus.Focus / PlayerStatus.MaxFocus, 1f);
-            this.focusBar.offsetMax = Vector2.zero;
-            this.focusBar.offsetMin = Vector2.zero;
+            this.focusBar.localScale = new Vector3((float)playerStatus.Focus / PlayerStatus.MaxFocus, 1f, 1f);
         }
+
         if (playerStatus.Gems != gems)
         {
             gems = playerStatus.Gems;
             gemsText.text = gems.ToString();
         }
-        //for (int i = 0; i > Hearts; i++)
-        //{
-        //    int col = i % 9;
-        //    int row = Mathf.Floor(i / 9f);
-
-        //    GUI.DrawTexture(new Rect(10 + (74 * col), 10 + (74 * row), 64, 64), heartTexture, ScaleMode.ScaleToFit);
-        //}
     }
 
     #endregion

@@ -7,6 +7,7 @@ public class BarrelProp : ChemistryObject {
 
     private float ExplosionRadius = 3;
     private float ExplosionDamage = 20;
+    public GameObject ExplosionEffect;
 
     protected override void FireInteraction()
     {
@@ -50,6 +51,8 @@ public class BarrelProp : ChemistryObject {
                 chemistry.ChemistryInteraction(ExplosionDamage, Element.Fire);
             }
         }
+        GameObject explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
+        explosion.GetComponent<Explosion>().Play();
     }
 
     //Shows AOE of barrel explosion

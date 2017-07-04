@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour {
 
-    public const int MaxHealth = 3;
+    public const int MaxHealth = 6;
     public const int MaxFocus = 100;
-    public int Health = 3;
+    public int Health = 6;
     public float Focus = 100;
     public int Gems = 0;
     public PlayerState state;

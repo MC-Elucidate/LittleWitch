@@ -8,6 +8,7 @@ public class UIExposer : MonoBehaviour
     //Other classes can reference this to do fancy things to the UI
 
     public RectTransform PlayerPortrait;
+    public RectTransform PlayerHeartBackgroundsPanel;
     public RectTransform PlayerHeartsPanel;
     public RectTransform PlayerFocusBar;
     public RectTransform PlayerReadySpell;

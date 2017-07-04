@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     private PlayerStatus playerStatus;
 
     private Image playerPortrait;
+    private RectTransform heartBackgroundsPanel;
     private RectTransform heartsPanel;
     private RectTransform focusBar;
     private Transform crosshair;
@@ -17,12 +18,13 @@ public class UIManager : MonoBehaviour
     private RectTransform[] inputStringPanel;
     private Text gemsText;
 
-    private int playerHealth = 0, playerMana = 0, gems = 0;
+    private int playerMaxHealth = 0, playerHealth = 0, playerMana = 0, gems = 0;
 
     void Start()
     {
         var UIExposer = GameObject.FindGameObjectWithTag(Helpers.Tags.PlayerHUD).GetComponent<UIExposer>();
         playerPortrait = UIExposer.PlayerPortrait.GetComponent<Image>();
+        heartBackgroundsPanel = UIExposer.PlayerHeartBackgroundsPanel;
         heartsPanel = UIExposer.PlayerHeartsPanel;
         focusBar = UIExposer.PlayerFocusBar;
         readySpell = UIExposer.PlayerReadySpell.GetComponent<Image>();
@@ -55,6 +57,20 @@ public class UIManager : MonoBehaviour
 
     public void UISetPlayerResources()
     {
+        if (PlayerStatus.MaxHealth != playerMaxHealth)
+        {
+            playerMaxHealth = PlayerStatus.MaxHealth;
+
+            for (int heartCount = 0; heartCount < heartBackgroundsPanel.childCount; heartCount++)
+            {
+                var currentHeart = heartBackgroundsPanel.GetChild(heartCount).gameObject;
+
+                if ((heartCount + 1) <= PlayerStatus.MaxHealth)
+                    currentHeart.SetActive(true);
+                else
+                    currentHeart.SetActive(false);
+            }
+        }
         if (playerStatus.Health != playerHealth)
         {
             playerHealth = playerStatus.Health;

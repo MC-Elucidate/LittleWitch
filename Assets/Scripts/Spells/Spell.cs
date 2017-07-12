@@ -51,7 +51,8 @@ public enum Element
     Earth,
     Fire,
     Water,
-    Wind
+    Wind,
+    None
 }
 
 public enum SpellType

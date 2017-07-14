@@ -124,6 +124,7 @@ public class PlayerMovementScript : MonoBehaviour
             transform.Rotate(new Vector3(0, (Time.deltaTime/Time.timeScale) * yawInput, 0));
     }
 
+    #region Jump
     public void Jump()
     {
         if (isGrounded)
@@ -134,12 +135,33 @@ public class PlayerMovementScript : MonoBehaviour
         }
     }
 
+    public void SteppedOnJumpPad(float jumpPadPower)
+    {
+        jumping = true;
+        velocity.y = jumpPadPower;
+    }
+
     public void EndJump()
     {
         jumping = false;
         jumpHoldCurrent = 0f;
     }
 
+
+
+    private void CheckJumpHoldTimer()
+    {
+        if (!jumping)
+            return;
+
+        jumpHoldCurrent += DeltaTime;
+
+        if (jumpHoldCurrent >= jumpHoldMax)
+            EndJump();
+    }
+    #endregion
+
+    #region GroundDetection
     private void CheckIsGrounded()
     {
         bool previouslyGrounded = isGrounded;
@@ -164,35 +186,6 @@ public class PlayerMovementScript : MonoBehaviour
         
     }
 
-    private void CheckJumpHoldTimer()
-    {
-        if (!jumping)
-            return;
-
-        jumpHoldCurrent += DeltaTime;
-
-        if (jumpHoldCurrent >= jumpHoldMax)
-            EndJump();
-    }
-
-    public bool IsInLocomotion()
-    {
-        return animator.GetCurrentAnimatorStateInfo(0).fullPathHash == locomotionHashID;
-    }
-    public bool IsInPivot()
-    {
-        return animator.GetCurrentAnimatorStateInfo(0).fullPathHash == pivotLeftHashID ||
-            animator.GetCurrentAnimatorStateInfo(0).fullPathHash == pivotRightHashID ||
-            animator.GetCurrentAnimatorStateInfo(0).fullPathHash == idlePivotRightHashID ||
-            animator.GetCurrentAnimatorStateInfo(0).fullPathHash == idlePivotLeftHashID;
-    }
-    private void SetAnimatorValues()
-    {
-        float speed = new Vector2(velocity.x, velocity.z).sqrMagnitude;
-        animator.SetFloat("Speed", speed);
-        animator.SetBool("InAir", !isGrounded);
-    }
-
     private void ParentToObject(Transform otherObject)
     {
         if (otherObject.root.tag == Helpers.Tags.MovingPlatform)
@@ -210,7 +203,29 @@ public class PlayerMovementScript : MonoBehaviour
         else
             this.transform.parent = null;
     }
+    #endregion
 
+    #region Animation
+    public bool IsInLocomotion()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).fullPathHash == locomotionHashID;
+    }
+    public bool IsInPivot()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).fullPathHash == pivotLeftHashID ||
+            animator.GetCurrentAnimatorStateInfo(0).fullPathHash == pivotRightHashID ||
+            animator.GetCurrentAnimatorStateInfo(0).fullPathHash == idlePivotRightHashID ||
+            animator.GetCurrentAnimatorStateInfo(0).fullPathHash == idlePivotLeftHashID;
+    }
+    private void SetAnimatorValues()
+    {
+        float speed = new Vector2(velocity.x, velocity.z).sqrMagnitude;
+        animator.SetFloat("Speed", speed);
+        animator.SetBool("InAir", !isGrounded);
+    }
+    #endregion
+
+    #region TimeSlow
     private float DeltaTime
     { get { return Time.deltaTime / timeEffect; } }
 
@@ -225,6 +240,7 @@ public class PlayerMovementScript : MonoBehaviour
         this.timeEffect = 1;
         animator.speed = 1;
     }
+    #endregion
 }
 
 

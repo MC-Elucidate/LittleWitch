@@ -7,7 +7,7 @@ public class TreeProp : ChemistryObject {
 
     public GameObject fireParticleSystem;
     private GameObject fire;
-    private Element elementState = Element.None;
+    public Element elementState = Element.None;
 
     protected override void EarthInteraction()
     {
@@ -29,7 +29,10 @@ public class TreeProp : ChemistryObject {
     protected override void WaterInteraction()
     {
         if (elementState == Element.Fire)
+        {
             Destroy(fire);
+            elementState = Element.None;
+        }
     }
 
     protected override void WindInteraction()

@@ -53,8 +53,6 @@ public class LockOnManager : MonoBehaviour {
     {
         if (!LockedOn)
             return;
-
-        magicManager.CastSpellOnTarget(LockOnTarget);
         TurnOffLockOn();
     }
 

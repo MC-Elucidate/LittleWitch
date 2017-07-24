@@ -108,13 +108,13 @@ public class UIManager : MonoBehaviour
         if (magicManager == null)
             return;
 
-        if (magicManager.readySpellPrefab != null && readySpell.sprite != magicManager.readySpellPrefab.GetComponent<Spell>().spellIcon)
+        if (magicManager.GetSpellIcon() != null && readySpell.sprite != magicManager.GetSpellIcon())
         {
             readySpell.gameObject.SetActive(true);
-            readySpell.sprite = magicManager.readySpellPrefab.GetComponent<Spell>().spellIcon;
+            readySpell.sprite = magicManager.GetSpellIcon();
         }
 
-        if (magicManager.readySpellPrefab == null)
+        if (magicManager.GetSpellIcon() == null)
         {
             readySpell.gameObject.SetActive(false);
             readySpell.sprite = null;

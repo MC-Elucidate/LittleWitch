@@ -116,14 +116,12 @@ public class PlayerInputScript : MonoBehaviour
         if (Input.GetButtonDown("Aim") || RightTrigger == TriggerState.Pressed)
         {
             cameraPivot.ResetPosition();
-            magicManager.ClearInputs();
             playerStatus.EnterAimMode();
             cameraScript.SetCameraState();
             uiManager.ToggleCrosshair(true);
         }
         if (Input.GetButtonUp("Aim") || RightTrigger == TriggerState.Released)
         {
-            magicManager.CastSpell();
             playerStatus.LeaveAimMode();
             cameraScript.SetCameraState();
             uiManager.ToggleCrosshair(false);
@@ -135,7 +133,6 @@ public class PlayerInputScript : MonoBehaviour
         if (Input.GetButtonDown("LockOn"))
         {
             cameraPivot.ResetPosition();
-            magicManager.ClearInputs();
             lockOn.LockOnPressed();
         }
         if (Input.GetButtonUp("LockOn"))
@@ -146,11 +143,8 @@ public class PlayerInputScript : MonoBehaviour
 
     void SpellInput()
     {
-        for (int i = 1; i <= 3; i++)
-        {
-            if (Input.GetButtonDown("Element" + i))
-                magicManager.AddToInputString(i);
-        }
+         if (Input.GetButtonDown("BasicAttack"))
+            magicManager.BasicAttackPressed();
     }
 
     void TimeInput()

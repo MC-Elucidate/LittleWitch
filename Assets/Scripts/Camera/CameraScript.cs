@@ -79,7 +79,7 @@ public class CameraScript : MonoBehaviour
         else if (state == CameraMode.Aim)
         {
             transform.position = Vector3.Lerp(transform.position, pivotTarget.GetTagetPosition(), aimSmooth);
-            transform.LookAt(lookTarget.position);
+            transform.LookAt(pivotTarget.transform.position);
         }
     }
 

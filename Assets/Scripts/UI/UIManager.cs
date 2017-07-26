@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour
     private RectTransform heartBackgroundsPanel;
     private RectTransform heartsPanel;
     private RectTransform focusBar;
-    private Transform crosshair;
+    public Transform crosshair { get;  private set; }
     private Image readySpell;
     private RectTransform[] inputStringPanel;
     private Text gemsText;

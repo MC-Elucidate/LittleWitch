@@ -9,12 +9,14 @@ public class MagicManager : MonoBehaviour
 
     private UIManager uiManager;
     private Transform spellSource;
+    private CameraScript cameraManager;
 
     public void Start()
     {
         uiManager = this.gameObject.GetComponent<UIManager>();
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;
         fireMode = gameObject.GetComponentInChildren<FireMode>();
+        cameraManager = Camera.main.GetComponent<CameraScript>();
         uiManager.UISetReadySpellIcon();
     }
 
@@ -24,7 +26,10 @@ public class MagicManager : MonoBehaviour
 
     public void BasicAttackPressed()
     {
-        fireMode.BasicAttackPressed(spellSource.position, transform.rotation);
+        if(cameraManager.state == CameraScript.CameraMode.Free)
+            fireMode.BasicAttackPressed(spellSource.position, transform.rotation);
+        else if (cameraManager.state == CameraScript.CameraMode.Aim)
+            fireMode.BasicAttackPressed(spellSource.position, Quaternion.LookRotation(uiManager.crosshair.position - spellSource.position, Vector3.up));
     }
 
     public Sprite GetSpellIcon()

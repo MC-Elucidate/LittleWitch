@@ -32,6 +32,14 @@ public class MagicManager : MonoBehaviour
             fireMode.BasicAttackPressed(spellSource.position, Quaternion.LookRotation(uiManager.crosshair.position - spellSource.position, Vector3.up));
     }
 
+    public void BasicAttackReleased()
+    {
+        if (cameraManager.state == CameraScript.CameraMode.Free)
+            fireMode.BasicAttackReleased(spellSource.position, transform.rotation);
+        else if (cameraManager.state == CameraScript.CameraMode.Aim)
+            fireMode.BasicAttackReleased(spellSource.position, Quaternion.LookRotation(uiManager.crosshair.position - spellSource.position, Vector3.up));
+    }
+
     public Sprite GetSpellIcon()
     {
         return fireMode.spellIcon;

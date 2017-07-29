@@ -20,7 +20,8 @@ public abstract class Spell: MonoBehaviour
     public virtual void Start()
     {
         this.rigidbody = this.transform.GetComponent<Rigidbody>();
-        Instantiate(castEffectPrefab, this.transform.position, this.transform.rotation);
+        if(castEffectPrefab != null)
+            Instantiate(castEffectPrefab, this.transform.position, this.transform.rotation);
     }
 
     //How the spell affects the world

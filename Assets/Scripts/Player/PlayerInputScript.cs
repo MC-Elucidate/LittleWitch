@@ -145,6 +145,8 @@ public class PlayerInputScript : MonoBehaviour
     {
          if (Input.GetButtonDown("BasicAttack"))
             magicManager.BasicAttackPressed();
+        else if (Input.GetButtonUp("BasicAttack"))
+            magicManager.BasicAttackReleased();
     }
 
     void TimeInput()

@@ -30,7 +30,9 @@ public class CameraScript : MonoBehaviour
 
     private const float PITCH_MAX_ANGLE = 45.0f;
     private const float PITCH_MIN_ANGLE = -10.0f;
-    
+
+    private float oldPitch = 0f;
+
     void Start()
     {
         lookTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraFollowTarget).transform;
@@ -45,35 +47,8 @@ public class CameraScript : MonoBehaviour
     {
         if (state == CameraMode.Free)
         {
-            if (yawInput != 0)
-                transform.RotateAround(lookTarget.position, Vector3.up, DeltaTime * yawInput);
-            
-            Vector3 lerpDestination = lookTarget.position;
-            bool cameraInYRange = Mathf.Abs(lerpDestination.y - transform.position.y) < yRangeLimit;
-            bool playerInAir = (playerMovement.velocity.y > 0 || (playerMovement.velocity.y < 0 && !playerMovement.isGrounded));
-
-            if (playerInAir)
-            {
-                if (cameraInYRange && !backToCharacter)
-                {
-                    lerpDestination.y = transform.position.y;
-                }
-                else
-                    backToCharacter = true;
-            }
-            else if(Mathf.Abs(lookTarget.position.y - transform.position.y) < 0.15f)
-            {
-                backToCharacter = false;
-            }
-
-            Quaternion lerpAngle = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
-            transform.position = Vector3.Lerp(transform.position, lerpDestination + lerpAngle * distanceFromTarget, 0.2f);
-
-            Quaternion currentRot = transform.rotation;
-            transform.LookAt(lerpDestination);
-            Quaternion destinationRot = transform.rotation;
-            transform.rotation = Quaternion.Lerp(currentRot, destinationRot, 0.2f);
-
+            BasicFreeCameraMovement();
+            //JakCameraMovement();
 
         }
         else if (state == CameraMode.Aim)
@@ -83,7 +58,7 @@ public class CameraScript : MonoBehaviour
         }
     }
 
-    private void EnterAimMode() { if(state != CameraMode.Aim) state = CameraMode.Aim; }
+    private void EnterAimMode() { if (state != CameraMode.Aim) state = CameraMode.Aim; }
 
     private void LeaveAimMode() { if (state != CameraMode.Free) state = CameraMode.Free; }
 
@@ -95,6 +70,7 @@ public class CameraScript : MonoBehaviour
             LeaveAimMode();
     }
 
+    #region TimeSlow
     private float DeltaTime
     { get { return Time.deltaTime / timeEffect; } }
 
@@ -109,4 +85,60 @@ public class CameraScript : MonoBehaviour
         this.timeEffect = 1;
         pivotTarget.SetTimeEffect(1);
     }
+    #endregion
+
+    #region FreeCameraStyles
+
+    private void BasicFreeCameraMovement()
+    {
+        if (yawInput != 0)
+            transform.RotateAround(lookTarget.position, Vector3.up, DeltaTime * yawInput);
+
+        
+        Vector3 objRotation = transform.rotation.eulerAngles;
+
+        if (pitchInput != 0)
+            oldPitch = objRotation.x > 180 ? objRotation.x - 360 : objRotation.x;
+
+        float newPitch = oldPitch + (pitchInput * DeltaTime);
+        float clampedPitch = Mathf.Clamp(newPitch, PITCH_MIN_ANGLE, PITCH_MAX_ANGLE);
+        transform.localEulerAngles = new Vector3(clampedPitch, objRotation.y, objRotation.z);
+
+        transform.position = Vector3.Lerp(transform.position, lookTarget.position + transform.rotation * distanceFromTarget, freeSmooth);
+        transform.LookAt(lookTarget.position);
+    }
+
+    private void JakCameraMovement()
+    {
+
+        if (yawInput != 0)
+            transform.RotateAround(lookTarget.position, Vector3.up, DeltaTime * yawInput);
+
+        Vector3 lerpDestination = lookTarget.position;
+            bool cameraInYRange = Mathf.Abs(lerpDestination.y - transform.position.y) < yRangeLimit;
+            bool playerInAir = (playerMovement.velocity.y > 0 || (playerMovement.velocity.y < 0 && !playerMovement.isGrounded));
+            if (playerInAir)
+            {
+                if (cameraInYRange && !backToCharacter)
+                {
+                    lerpDestination.y = transform.position.y;
+                }
+                else
+                    backToCharacter = true;
+            }
+        
+            else if (Mathf.Abs(lookTarget.position.y - transform.position.y) < 0.15f)
+            {
+                backToCharacter = false;
+            }
+
+            Quaternion lerpAngle = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
+            transform.position = Vector3.Lerp(transform.position, lerpDestination + lerpAngle* distanceFromTarget, 0.2f);
+
+            Quaternion currentRot = transform.rotation;
+            transform.LookAt(lerpDestination);
+            Quaternion destinationRot = transform.rotation;
+            transform.rotation = Quaternion.Lerp(currentRot, destinationRot, 0.2f);
+    }
+    #endregion
 }

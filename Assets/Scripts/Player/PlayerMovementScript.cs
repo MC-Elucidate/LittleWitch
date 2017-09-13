@@ -52,7 +52,7 @@ public class PlayerMovementScript : MonoBehaviour
 
     void Start()
     {
-        animator = gameObject.GetComponent<Animator>();
+        animator = gameObject.GetComponentInChildren<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
         playerStatus = gameObject.GetComponent<PlayerStatus>();

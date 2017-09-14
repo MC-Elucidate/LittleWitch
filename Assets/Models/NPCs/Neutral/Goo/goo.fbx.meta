@@ -1,24 +1,23 @@
 fileFormatVersion: 2
-guid: 155a441609321bd4ca881deed2f93bce
-timeCreated: 1505404085
+guid: 0affc9df9e68b3342a2bf8d37f53c58b
+timeCreated: 1505412187
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Cube
-    100002: Cube_001
+    100000: Camera
+    100002: Cone
     100004: //RootNode
-    400000: Cube
-    400002: Cube_001
+    100006: Lamp
+    100008: Lamp.001
+    400000: Camera
+    400002: Cone
     400004: //RootNode
-    2300000: Cube
-    2300002: Cube_001
-    3300000: Cube
-    3300002: Cube_001
-    4300000: Cube
-    4300002: Cube_001
-    7400000: Default Take
-    9500000: //RootNode
+    400006: Lamp
+    400008: Lamp.001
+    2300000: Cone
+    3300000: Cone
+    4300000: Cone
   materials:
     importMaterials: 1
     materialName: 0
@@ -81,7 +80,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

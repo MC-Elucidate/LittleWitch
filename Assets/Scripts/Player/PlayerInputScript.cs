@@ -50,7 +50,6 @@ public class PlayerInputScript : MonoBehaviour
         AimInput();
         LockOnInput();
         SpellInput();
-        TimeInput();
     }
 
     private void CheckTriggers()
@@ -147,12 +146,6 @@ public class PlayerInputScript : MonoBehaviour
             magicManager.BasicAttackPressed();
         else if (Input.GetButtonUp("BasicAttack"))
             magicManager.BasicAttackReleased();
-    }
-
-    void TimeInput()
-    {
-        if (Input.GetButtonDown("TimeSlow"))
-            timeSlow.Trigger();
     }
 
     private void HideCursor()

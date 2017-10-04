@@ -19,12 +19,12 @@ public class FireMode : ASpellMode
             timeHeld += Time.deltaTime;
     }
 
-    public override void AttackPressed(Vector3 spawnPosition, Vector3 spawnDirection)
+    public override void AttackPressed(Vector3 spawnPosition, Vector3 spawnDirection, Vector3? targetPosition = null)
     {
         isCharging = true;
     }
 
-    public override void AttackReleased(Vector3 spawnPosition, Vector3 spawnDirection)
+    public override void AttackReleased(Vector3 spawnPosition, Vector3 spawnDirection, Vector3? targetPosition = null)
     {
         if(timeHeld >= timeForChargedAttack)
             GameObject.Instantiate(chargedFireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));

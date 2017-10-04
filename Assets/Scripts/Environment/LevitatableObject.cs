@@ -10,13 +10,18 @@ public class LevitatableObject : MonoBehaviour {
     private bool reachedHeight = false;
     private Vector3 destination;
     private Vector3 startPosition;
+    private Transform grabbedLocation;
     private Rigidbody rigidbody;
     private ChemistryObject chemistryObject;
+
+    public float ThrowPower = 25f;
     
     public float LevitationHeight = 10;
     public float TimeToRise = 3f;
     public float MaxFloatTime = 10;
     private float currentFloatTime;
+
+    private bool grabbed = false;
 
 	public void Start () {
         rigidbody = GetComponent<Rigidbody>();
@@ -27,7 +32,14 @@ public class LevitatableObject : MonoBehaviour {
         if (levitated)
         {
             currentFloatTime += Time.deltaTime;
-            if (!reachedHeight)
+
+            if (grabbed)
+            {
+                if((transform.position - grabbedLocation.position).sqrMagnitude > 1)
+                    transform.position = Vector3.Lerp(transform.position, grabbedLocation.position, 0.1f);
+            }
+
+            else if (!reachedHeight)
             {
                 transform.position = Vector3.Lerp(startPosition, destination, currentFloatTime / TimeToRise);
 
@@ -72,5 +84,23 @@ public class LevitatableObject : MonoBehaviour {
             EndLevitate();
         else
             Levitate();
+    }
+
+    public void Grab(Transform grabbedLocation)
+    {
+        grabbed = true;
+        this.grabbedLocation = grabbedLocation;
+    }
+
+    public void ThrowAtTarget(Vector3 targetLocation)
+    {
+        ThrowInDirection(targetLocation - transform.position);
+    }
+
+    public void ThrowInDirection(Vector3 throwDirection)
+    {
+        EndLevitate();
+        grabbed = false;
+        rigidbody.velocity = throwDirection.normalized * ThrowPower;
     }
 }

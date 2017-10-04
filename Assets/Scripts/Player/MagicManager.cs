@@ -34,7 +34,7 @@ public class MagicManager : MonoBehaviour
         if(cameraManager.state == CameraScript.CameraMode.Free)
             activeSpellMode.AttackPressed(spellSource.position, transform.forward);
         else if (cameraManager.state == CameraScript.CameraMode.Aim)
-            activeSpellMode.AttackPressed(spellSource.position, uiManager.crosshair.position - spellSource.position);
+            activeSpellMode.AttackPressed(spellSource.position, uiManager.crosshair.position - spellSource.position, uiManager.crosshair.position);
     }
 
     public void BasicAttackReleased()
@@ -42,7 +42,7 @@ public class MagicManager : MonoBehaviour
         if (cameraManager.state == CameraScript.CameraMode.Free)
             activeSpellMode.AttackReleased(spellSource.position, transform.forward);
         else if (cameraManager.state == CameraScript.CameraMode.Aim)
-            activeSpellMode.AttackReleased(spellSource.position, uiManager.crosshair.position - spellSource.position);
+            activeSpellMode.AttackReleased(spellSource.position, uiManager.crosshair.position - spellSource.position, uiManager.crosshair.position);
     }
 
     public Sprite GetSpellIcon()

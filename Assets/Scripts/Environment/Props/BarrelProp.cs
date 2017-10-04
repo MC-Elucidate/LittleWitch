@@ -26,12 +26,12 @@ public class BarrelProp : ChemistryObject {
 
     protected override void WindInteraction()
     {
-        throw new NotImplementedException();
     }
 
     protected override void TakeDamage(float damage)
     {
-        Destroy(gameObject);
+        if(damage > 0)
+            Destroy(gameObject);
     }
 
     private void Explode()

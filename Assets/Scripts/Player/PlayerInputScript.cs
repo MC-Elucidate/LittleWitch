@@ -12,7 +12,7 @@ public class PlayerInputScript : MonoBehaviour
     TimeSlowManager timeSlow;
     LockOnManager lockOn;
 
-    private enum TriggerState
+    private enum AxisState
     {
         Pressed = 1,
         Released = 2,
@@ -20,7 +20,9 @@ public class PlayerInputScript : MonoBehaviour
         NotHeld = 4
     }
 
-    TriggerState RightTrigger;
+    AxisState RightTrigger;
+    AxisState LeftDPad;
+    AxisState RightDPad;
 
     void Start()
     {
@@ -32,15 +34,17 @@ public class PlayerInputScript : MonoBehaviour
         timeSlow = gameObject.GetComponent<TimeSlowManager>();
         playerStatus = gameObject.GetComponent<PlayerStatus>();
         lockOn = gameObject.GetComponent<LockOnManager>();
-        RightTrigger = TriggerState.NotHeld;
+        RightTrigger = AxisState.NotHeld;
+        RightDPad = AxisState.NotHeld;
+        LeftDPad = AxisState.NotHeld;
         HideCursor();
     }
 
     void Update()
     {
-        CheckTriggers();
+        CheckAxes();
         HandleInputs();
-        SaveTriggerStates();
+        SaveAxesStates();
     }
 
     private void HandleInputs()
@@ -50,27 +54,58 @@ public class PlayerInputScript : MonoBehaviour
         AimInput();
         LockOnInput();
         SpellInput();
+        SpellModeInput();
     }
 
-    private void CheckTriggers()
+    #region InputForAxes
+    private void CheckAxes()
     {
-        if (Input.GetAxisRaw("AimTrigger") == 1 && RightTrigger == TriggerState.NotHeld)
+        if (Input.GetAxisRaw("AimTrigger") == 1 && RightTrigger == AxisState.NotHeld)
         {
-            RightTrigger = TriggerState.Pressed;
+            RightTrigger = AxisState.Pressed;
         }
-        else if (Input.GetAxisRaw("AimTrigger") == 0 && RightTrigger == TriggerState.Held)
+        else if (Input.GetAxisRaw("AimTrigger") == 0 && RightTrigger == AxisState.Held)
         {
-            RightTrigger = TriggerState.Released;
+            RightTrigger = AxisState.Released;
+        }
+
+        if (Input.GetAxisRaw("SelectSpell1") == 1 && RightDPad == AxisState.NotHeld)
+        {
+            RightDPad = AxisState.Pressed;
+        }
+        else if (Input.GetAxisRaw("SelectSpell1") <= 0 && RightDPad == AxisState.Held)
+        {
+            RightDPad = AxisState.Released;
+        }
+
+        if (Input.GetAxisRaw("SelectSpell1") == -1 && LeftDPad == AxisState.NotHeld)
+        {
+            LeftDPad = AxisState.Pressed;
+        }
+        else if (Input.GetAxisRaw("SelectSpell1") >= 0 && LeftDPad == AxisState.Held)
+        {
+            LeftDPad = AxisState.Released;
         }
     }
 
-    private void SaveTriggerStates()
+    private void SaveAxesStates()
     {
-        if (RightTrigger == TriggerState.Pressed)
-            RightTrigger = TriggerState.Held;
-        else if (RightTrigger == TriggerState.Released)
-            RightTrigger = TriggerState.NotHeld;
+        if (RightTrigger == AxisState.Pressed)
+            RightTrigger = AxisState.Held;
+        else if (RightTrigger == AxisState.Released)
+            RightTrigger = AxisState.NotHeld;
+
+        if (RightDPad == AxisState.Pressed)
+            RightDPad = AxisState.Held;
+        else if (RightDPad == AxisState.Released)
+            RightDPad = AxisState.NotHeld;
+
+        if (LeftDPad == AxisState.Pressed)
+            LeftDPad = AxisState.Held;
+        else if (LeftDPad == AxisState.Released)
+            LeftDPad = AxisState.NotHeld;
     }
+    #endregion
 
     void MovementInput()
     {
@@ -112,14 +147,14 @@ public class PlayerInputScript : MonoBehaviour
 
     void AimInput()
     {
-        if (Input.GetButtonDown("Aim") || RightTrigger == TriggerState.Pressed)
+        if (Input.GetButtonDown("Aim") || RightTrigger == AxisState.Pressed)
         {
             cameraPivot.ResetPosition();
             playerStatus.EnterAimMode();
             cameraScript.SetCameraState();
             uiManager.ToggleCrosshair(true);
         }
-        if (Input.GetButtonUp("Aim") || RightTrigger == TriggerState.Released)
+        if (Input.GetButtonUp("Aim") || RightTrigger == AxisState.Released)
         {
             playerStatus.LeaveAimMode();
             cameraScript.SetCameraState();
@@ -146,6 +181,18 @@ public class PlayerInputScript : MonoBehaviour
             magicManager.BasicAttackPressed();
         else if (Input.GetButtonUp("BasicAttack"))
             magicManager.BasicAttackReleased();
+    }
+
+    void SpellModeInput()
+    {
+        if (RightDPad == AxisState.Pressed)
+        {
+            magicManager.ActivateWindMode();
+        }
+        if (LeftDPad == AxisState.Pressed)
+        {
+            magicManager.ActivateFireMode();
+        }
     }
 
     private void HideCursor()

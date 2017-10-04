@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireMode : MonoBehaviour {
+public class FireMode : ASpellMode
+{
 
     public Spell fireballPrefab;
     public Spell chargedFireballPrefab;
-    public Sprite spellIcon;
+    
 
     private float timeHeld = 0f;
     private float timeForChargedAttack = 3f;
@@ -18,17 +19,17 @@ public class FireMode : MonoBehaviour {
             timeHeld += Time.deltaTime;
     }
 
-    public void BasicAttackPressed(Vector3 spawnPosition, Quaternion spawnRotation)
+    public override void AttackPressed(Vector3 spawnPosition, Vector3 spawnDirection)
     {
         isCharging = true;
     }
 
-    public void BasicAttackReleased(Vector3 spawnPosition, Quaternion spawnRotation)
+    public override void AttackReleased(Vector3 spawnPosition, Vector3 spawnDirection)
     {
         if(timeHeld >= timeForChargedAttack)
-            GameObject.Instantiate(chargedFireballPrefab, spawnPosition, spawnRotation);
+            GameObject.Instantiate(chargedFireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));
         else
-            GameObject.Instantiate(fireballPrefab, spawnPosition, spawnRotation);
+            GameObject.Instantiate(fireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));
 
         isCharging = false;
         timeHeld = 0f;

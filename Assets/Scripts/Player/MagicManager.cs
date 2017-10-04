@@ -6,6 +6,8 @@ public class MagicManager : MonoBehaviour
 {
 
     private FireMode fireMode = null;
+    private WindMode windMode = null;
+    private ASpellMode activeSpellMode = null;
 
     private UIManager uiManager;
     private Transform spellSource;
@@ -16,6 +18,9 @@ public class MagicManager : MonoBehaviour
         uiManager = this.gameObject.GetComponent<UIManager>();
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;
         fireMode = gameObject.GetComponentInChildren<FireMode>();
+        windMode = gameObject.GetComponentInChildren<WindMode>();
+        activeSpellMode = fireMode;
+
         cameraManager = Camera.main.GetComponent<CameraScript>();
         uiManager.UISetReadySpellIcon();
     }
@@ -27,21 +32,33 @@ public class MagicManager : MonoBehaviour
     public void BasicAttackPressed()
     {
         if(cameraManager.state == CameraScript.CameraMode.Free)
-            fireMode.BasicAttackPressed(spellSource.position, transform.rotation);
+            activeSpellMode.AttackPressed(spellSource.position, transform.forward);
         else if (cameraManager.state == CameraScript.CameraMode.Aim)
-            fireMode.BasicAttackPressed(spellSource.position, Quaternion.LookRotation(uiManager.crosshair.position - spellSource.position, Vector3.up));
+            activeSpellMode.AttackPressed(spellSource.position, uiManager.crosshair.position - spellSource.position);
     }
 
     public void BasicAttackReleased()
     {
         if (cameraManager.state == CameraScript.CameraMode.Free)
-            fireMode.BasicAttackReleased(spellSource.position, transform.rotation);
+            activeSpellMode.AttackReleased(spellSource.position, transform.forward);
         else if (cameraManager.state == CameraScript.CameraMode.Aim)
-            fireMode.BasicAttackReleased(spellSource.position, Quaternion.LookRotation(uiManager.crosshair.position - spellSource.position, Vector3.up));
+            activeSpellMode.AttackReleased(spellSource.position, uiManager.crosshair.position - spellSource.position);
     }
 
     public Sprite GetSpellIcon()
     {
-        return fireMode.spellIcon;
+        return activeSpellMode.spellIcon;
+    }
+
+    public void ActivateFireMode()
+    {
+        if(activeSpellMode != fireMode)
+        activeSpellMode = fireMode;
+    }
+
+    public void ActivateWindMode()
+    {
+        if (activeSpellMode != windMode)
+            activeSpellMode = windMode;
     }
 }

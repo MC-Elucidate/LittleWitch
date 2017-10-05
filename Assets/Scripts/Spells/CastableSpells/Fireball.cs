@@ -11,7 +11,7 @@ public class Fireball : Spell
         base.Start();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         this.MoveProjectile();
     }

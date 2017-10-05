@@ -8,7 +8,8 @@ public class CameraScript : MonoBehaviour
     public enum CameraMode
     {
         Free = 1,
-        Aim = 2
+        Aim = 2,
+        HardLockOn = 3,
     }
 
     public float yawInput = 0;
@@ -26,7 +27,9 @@ public class CameraScript : MonoBehaviour
     private CameraPositionPivotScript pivotTarget;
     private PlayerStatus playerStatus;
     private PlayerMovementScript playerMovement;
+    private LockOnManager lockOnManager;
     public Vector3 distanceFromTarget = new Vector3(0f, 0f, -4f);
+    private Vector3 distanceFromPlayerInHardLockOn = new Vector3(0f, 2f, -4f);
 
     private const float PITCH_MAX_ANGLE = 45.0f;
     private const float PITCH_MIN_ANGLE = -10.0f;
@@ -39,6 +42,7 @@ public class CameraScript : MonoBehaviour
         pivotTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraPositionPivot).GetComponent<CameraPositionPivotScript>();
         playerStatus = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).GetComponent<PlayerStatus>();
         playerMovement = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).GetComponent<PlayerMovementScript>();
+        lockOnManager = playerStatus.GetComponent<LockOnManager>();
         state = CameraMode.Free;
         transform.position = lookTarget.position + transform.rotation * distanceFromTarget;
     }
@@ -56,6 +60,14 @@ public class CameraScript : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, pivotTarget.GetTagetPosition(), aimSmooth);
             transform.LookAt(pivotTarget.transform.position);
         }
+
+        else if (state == CameraMode.HardLockOn)
+        {
+            Vector3 directionFromPlayer = (lockOnManager.LockOnTarget.transform.position - playerStatus.transform.position);
+            Vector3 positionFromPlayer = (playerStatus.transform.position - directionFromPlayer.normalized) + (directionFromPlayer.sqrMagnitude > 1 ? (transform.rotation * distanceFromPlayerInHardLockOn) : new Vector3(0,1,0));
+            transform.position = Vector3.Lerp(transform.position, positionFromPlayer, 0.1f);
+            transform.LookAt(lockOnManager.LockOnTarget.transform.position);
+        }
     }
 
     private void EnterAimMode() { if (state != CameraMode.Aim) state = CameraMode.Aim; }
@@ -68,6 +80,16 @@ public class CameraScript : MonoBehaviour
             EnterAimMode();
         else if (playerStatus.state == PlayerStatus.PlayerState.FreeMovement)
             LeaveAimMode();
+    }
+
+    public void LockOnToTarget()
+    {
+        state = CameraMode.HardLockOn;
+    }
+
+    public void TurnOffLockOn()
+    {
+        state = CameraMode.Free;
     }
 
     #region TimeSlow

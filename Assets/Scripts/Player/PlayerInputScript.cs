@@ -167,11 +167,7 @@ public class PlayerInputScript : MonoBehaviour
         if (Input.GetButtonDown("LockOn"))
         {
             cameraPivot.ResetPosition();
-            lockOn.LockOnPressed();
-        }
-        if (Input.GetButtonUp("LockOn"))
-        {
-            lockOn.LockOnReleased();
+            lockOn.HardLockOnPressed();
         }
     }
 

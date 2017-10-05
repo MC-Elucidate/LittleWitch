@@ -5,26 +5,36 @@ using UnityEngine;
 public class LockOnManager : MonoBehaviour {
 
     private GameObject LockOnIndicator;
-    private GameObject LockOnTarget;
+    public GameObject LockOnTarget { get; private set; }
     public GameObject LockOnIndicatorPrefab;
     public LayerMask LockOnLayer;
 
     private float Radius = 20f;
-    private bool LockedOn = false;
-    
+    private bool SoftLockedOn = false;
+    private bool HardLockedOn = false;
+
     private MagicManager magicManager;
+    private CameraScript cameraScript;
 
     void Start () {
         magicManager = gameObject.GetComponent<MagicManager>();
+        cameraScript = Camera.main.GetComponent<CameraScript>();
     }
 	
 	void Update () {
+        if (SoftLockedOn && LockOnIndicator == null)
+            TurnOffSoftLockOn();
 
-        if (LockedOn && LockOnIndicator == null)
-            TurnOffLockOn();
+        if (HardLockedOn && LockOnIndicator == null)
+            TurnOffHardLockOn();
+
+        if (cameraScript.state == CameraScript.CameraMode.Free)
+            CheckSoftLockOn();
+        else if (cameraScript.state == CameraScript.CameraMode.Aim && (SoftLockedOn || HardLockedOn))
+        { TurnOffSoftLockOn(); TurnOffHardLockOn(); }
     }
 
-    public void LockOnPressed()
+    public void CheckSoftLockOn()
     {
         Collider[] objectsInRange = Physics.OverlapSphere(transform.position + transform.forward * Radius, Radius, LockOnLayer);
         Collider closestObject = null;
@@ -37,32 +47,60 @@ public class LockOnManager : MonoBehaviour {
         {
             if (objectInRange.isTrigger)
                 continue;
-            if (Mathf.Abs((objectInRange.transform.position - transform.position).sqrMagnitude) < closestObjectDistance)
+            float objectDistance = Mathf.Abs((objectInRange.transform.position - transform.position).sqrMagnitude);
+            if (objectDistance < closestObjectDistance)
+            {
+                closestObjectDistance = objectDistance;
                 closestObject = objectInRange;
+            }
         }
+        
+        if (LockOnTarget == null || LockOnTarget.name != closestObject.name)
+        {
+            TurnOffSoftLockOn();
+            LockOnTarget = closestObject.gameObject;
+            SoftLockedOn = true;
 
-        LockOnTarget = closestObject.gameObject;
-        LockedOn = true;
-
-        Transform LockOnIndicatorTransform = Helpers.FindObjectInChildren(LockOnTarget, "LockOnIndicatorPosition").transform;
-        LockOnIndicator = Instantiate(LockOnIndicatorPrefab, LockOnIndicatorTransform.position, Quaternion.identity);
-        LockOnIndicator.transform.parent = LockOnIndicatorTransform;
+            Transform LockOnIndicatorTransform = Helpers.FindObjectInChildren(LockOnTarget, "LockOnIndicatorPosition").transform;
+            LockOnIndicator = Instantiate(LockOnIndicatorPrefab, LockOnIndicatorTransform.position, Quaternion.identity);
+            LockOnIndicator.transform.parent = LockOnIndicatorTransform;
+        }
     }
 
-    public void LockOnReleased()
+    private void TurnOffSoftLockOn()
     {
-        if (!LockedOn)
+        if (!SoftLockedOn)
             return;
-        TurnOffLockOn();
-    }
-
-    private void TurnOffLockOn()
-    {
-        LockedOn = false;
+        SoftLockedOn = false;
         Destroy(LockOnIndicator);
         LockOnTarget = null;
     }
-    
+
+    public void HardLockOnPressed()
+    {
+        if (HardLockedOn)
+            TurnOffHardLockOn();
+        else if (SoftLockedOn)
+            TurnOnHardLockOn();
+    }
+
+    private void TurnOffHardLockOn()
+    {
+        if (!HardLockedOn)
+            return;
+        HardLockedOn = false;
+        cameraScript.TurnOffLockOn();
+        Destroy(LockOnIndicator);
+        LockOnTarget = null;
+    }
+
+    private void TurnOnHardLockOn()
+    {
+        SoftLockedOn = false;
+        HardLockedOn = true;
+        cameraScript.LockOnToTarget();
+    }
+
     //Draw LockOn Range
     private void OnDrawGizmos()
     {

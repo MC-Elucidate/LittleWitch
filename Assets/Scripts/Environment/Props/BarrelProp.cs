@@ -7,6 +7,7 @@ public class BarrelProp : ChemistryObject {
 
     private float ExplosionRadius = 3;
     private float ExplosionDamage = 20;
+    private bool exploded = false;
     public GameObject ExplosionEffect;
 
     protected override void FireInteraction()
@@ -36,6 +37,9 @@ public class BarrelProp : ChemistryObject {
 
     private void Explode()
     {
+        if (exploded)
+            return;
+        exploded = true;
         Collider[] objectsInRange = Physics.OverlapSphere(transform.position, ExplosionRadius);
         foreach (Collider objectHit in objectsInRange)
         {

@@ -38,6 +38,8 @@ public class PlayerMovementScript : MonoBehaviour
     public bool jumping = false;
     public float jumpPower = 4f;
     public float jumpHoldMax = 0.35f;
+    public float jumpLeniencyTime = 0.25f;
+    private float airTime = 0;
     private float jumpHoldCurrent = 0f;
 
     //Camera variables
@@ -70,6 +72,7 @@ public class PlayerMovementScript : MonoBehaviour
         CheckJumpHoldTimer();
         UpdateMovement();
         AimRotation();
+        UpdateAirTime();
         SetAnimatorValues();
     }
 
@@ -127,11 +130,16 @@ public class PlayerMovementScript : MonoBehaviour
     #region Jump
     public void Jump()
     {
-        if (isGrounded)
+        bool jumpIsWithinLeniencyWindow = !isGrounded && airTime <= jumpLeniencyTime;
+
+        if (isGrounded || jumpIsWithinLeniencyWindow)
         {
             jumping = true;
             velocity.y = jumpPower;
             sounds.PlayJumpSound();
+
+            if(jumpIsWithinLeniencyWindow)
+                print("Saved by the leniency");
         }
     }
 
@@ -158,6 +166,14 @@ public class PlayerMovementScript : MonoBehaviour
 
         if (jumpHoldCurrent >= jumpHoldMax)
             EndJump();
+    }
+
+    private void UpdateAirTime()
+    {
+        if (!isGrounded)
+            airTime += Time.deltaTime;
+        else
+            airTime = 0;
     }
     #endregion
 

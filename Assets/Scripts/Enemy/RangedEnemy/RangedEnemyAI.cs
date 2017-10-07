@@ -42,6 +42,11 @@ public class RangedEnemyAI : MonoBehaviour {
 
             if (lastShotTime <= 0 && status.IsAggro())
                 Shoot();
+
+            if (status.IsAggro())
+            {
+                transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
+            }
         }
 	}
 

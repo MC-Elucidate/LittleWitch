@@ -9,7 +9,5 @@ public class RangedEnemyProjectileTrigger : MonoBehaviour
             collider.gameObject.GetComponent<PlayerDamageManager>().TakeDamage(1);
             Destroy(this.gameObject);
         }
-        else
-            Debug.Log("The object that was hit wasn't tagged as player");
     }
 }

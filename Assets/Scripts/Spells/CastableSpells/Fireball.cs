@@ -23,8 +23,13 @@ public class Fireball : Spell
         Destroy(this.gameObject);
     }
 
-    void OnCollisionEnter()
+    void OnTriggerEnter(Collider collider)
     {
-        this.Trigger();
+        ChemistryObject chemObj = collider.GetComponent<ChemistryObject>();
+        if (chemObj != null)
+        {
+            chemObj.ChemistryInteraction(damage, element);
+            Trigger();
+        }
     }
 }

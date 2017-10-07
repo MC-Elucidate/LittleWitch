@@ -15,10 +15,10 @@ public abstract class ChemistryObject : MonoBehaviour {
 
    protected void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == Helpers.Tags.Spell)
-        {
-            SpellInteract(collision.gameObject.GetComponent<Spell>());
-        }
+        //if (collision.gameObject.tag == Helpers.Tags.Spell)
+        //{
+          //  SpellInteract(collision.gameObject.GetComponent<Spell>());
+        //}
     }
 
     protected void SpellInteract(Spell spell)

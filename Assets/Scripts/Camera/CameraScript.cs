@@ -63,6 +63,11 @@ public class CameraScript : MonoBehaviour
 
         else if (state == CameraMode.HardLockOn)
         {
+            if (lockOnManager.LockOnTarget == null)
+            {
+                TurnOffLockOn();
+                return;
+            }
             Vector3 directionFromPlayer = (lockOnManager.LockOnTarget.transform.position - playerStatus.transform.position);
             Vector3 positionFromPlayer = (playerStatus.transform.position - directionFromPlayer.normalized) + (directionFromPlayer.sqrMagnitude > 1 ? (transform.rotation * distanceFromPlayerInHardLockOn) : new Vector3(0,1,0));
             transform.position = Vector3.Lerp(transform.position, positionFromPlayer, 0.1f);

@@ -33,6 +33,11 @@ public class EnemyBaseStatus : ChemistryObject {
     {
         print("Quick as the wind!");
     }
+
+    protected override void IceInteraction()
+    {
+        print("Ice to meet you...");
+    }
     #endregion
 
     #region HealthState

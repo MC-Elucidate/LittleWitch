@@ -7,6 +7,7 @@ public class MagicManager : MonoBehaviour
 
     private FireMode fireMode = null;
     private WindMode windMode = null;
+    private IceMode iceMode = null;
     private ASpellMode activeSpellMode = null;
 
     private UIManager uiManager;
@@ -20,6 +21,7 @@ public class MagicManager : MonoBehaviour
         spellSource = this.gameObject.FindObjectInChildren("SpellSource").transform;
         fireMode = gameObject.GetComponentInChildren<FireMode>();
         windMode = gameObject.GetComponentInChildren<WindMode>();
+        iceMode = gameObject.GetComponentInChildren<IceMode>();
         activeSpellMode = fireMode;
 
         cameraManager = Camera.main.GetComponent<CameraScript>();
@@ -77,4 +79,11 @@ public class MagicManager : MonoBehaviour
         if (activeSpellMode != windMode)
             activeSpellMode = windMode;
     }
+
+    public void ActivateIceMode()
+    {
+        if (activeSpellMode != iceMode)
+            activeSpellMode = iceMode;
+    }
+
 }

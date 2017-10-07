@@ -52,6 +52,7 @@ public enum Element
     Fire,
     Water,
     Wind,
+    Ice,
     None
 }
 

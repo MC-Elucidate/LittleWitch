@@ -38,4 +38,9 @@ public class TreeProp : ChemistryObject {
     protected override void WindInteraction()
     {
     }
+
+    protected override void IceInteraction()
+    {
+        print("Ice element doesn't affect trees currently");
+    }
 }

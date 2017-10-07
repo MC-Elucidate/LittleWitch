@@ -48,6 +48,9 @@ public abstract class ChemistryObject : MonoBehaviour {
             case Element.Wind:
                 WindInteraction();
                 break;
+            case Element.Ice:
+                IceInteraction();
+                break;
             default:
                 break;
         }
@@ -60,6 +63,8 @@ public abstract class ChemistryObject : MonoBehaviour {
     protected abstract void EarthInteraction();
 
     protected abstract void WindInteraction();
+
+    protected abstract void IceInteraction();
 
     protected abstract void TakeDamage(float damage);
 }

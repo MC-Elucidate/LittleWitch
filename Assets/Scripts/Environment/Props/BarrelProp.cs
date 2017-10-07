@@ -27,6 +27,12 @@ public class BarrelProp : ChemistryObject {
 
     protected override void WindInteraction()
     {
+        print("Wind element doesn't affect barrels currently");
+    }
+
+    protected override void IceInteraction()
+    {
+        print("Ice element doesn't affect barrels currently");
     }
 
     protected override void TakeDamage(float damage)
@@ -65,5 +71,4 @@ public class BarrelProp : ChemistryObject {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, ExplosionRadius);
     }
-
 }

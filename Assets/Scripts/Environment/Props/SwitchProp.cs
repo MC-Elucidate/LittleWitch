@@ -25,6 +25,10 @@ public class SwitchProp : ChemistryObject {
     protected override void WindInteraction()
     {
     }
+
+    protected override void IceInteraction()
+    {
+    }
     #endregion
 
     protected override void TakeDamage(float damage)

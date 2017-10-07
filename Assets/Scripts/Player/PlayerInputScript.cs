@@ -23,6 +23,8 @@ public class PlayerInputScript : MonoBehaviour
     AxisState RightTrigger;
     AxisState LeftDPad;
     AxisState RightDPad;
+    AxisState DownDPad;
+    AxisState UpDPad;
 
     void Start()
     {
@@ -37,6 +39,8 @@ public class PlayerInputScript : MonoBehaviour
         RightTrigger = AxisState.NotHeld;
         RightDPad = AxisState.NotHeld;
         LeftDPad = AxisState.NotHeld;
+        UpDPad = AxisState.NotHeld;
+        DownDPad = AxisState.NotHeld;
         HideCursor();
     }
 
@@ -86,6 +90,24 @@ public class PlayerInputScript : MonoBehaviour
         {
             LeftDPad = AxisState.Released;
         }
+
+        if (Input.GetAxisRaw("SelectSpell2") == 1 && UpDPad == AxisState.NotHeld)
+        {
+            UpDPad = AxisState.Pressed;
+        }
+        else if (Input.GetAxisRaw("SelectSpell2") <= 0 && UpDPad == AxisState.Held)
+        {
+            UpDPad = AxisState.Released;
+        }
+
+        if (Input.GetAxisRaw("SelectSpell2") == -1 && DownDPad == AxisState.NotHeld)
+        {
+            DownDPad = AxisState.Pressed;
+        }
+        else if (Input.GetAxisRaw("SelectSpell2") >= 0 && DownDPad == AxisState.Held)
+        {
+            DownDPad = AxisState.Released;
+        }
     }
 
     private void SaveAxesStates()
@@ -104,6 +126,16 @@ public class PlayerInputScript : MonoBehaviour
             LeftDPad = AxisState.Held;
         else if (LeftDPad == AxisState.Released)
             LeftDPad = AxisState.NotHeld;
+
+        if (UpDPad == AxisState.Pressed)
+            UpDPad = AxisState.Held;
+        else if (UpDPad == AxisState.Released)
+            UpDPad = AxisState.NotHeld;
+
+        if (DownDPad == AxisState.Pressed)
+            DownDPad = AxisState.Held;
+        else if (DownDPad == AxisState.Released)
+            DownDPad = AxisState.NotHeld;
     }
     #endregion
 
@@ -188,6 +220,10 @@ public class PlayerInputScript : MonoBehaviour
         if (LeftDPad == AxisState.Pressed)
         {
             magicManager.ActivateFireMode();
+        }
+        if (UpDPad == AxisState.Pressed)
+        {
+            magicManager.ActivateIceMode();
         }
     }
 

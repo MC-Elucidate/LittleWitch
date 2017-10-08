@@ -48,6 +48,6 @@ public class FireMode : ASpellMode
 		isCharging = false;
 		fullyCharged = false;
 		timeHeld = 0f;
-		spellChargeParticleModule.EmitChargingParticles(0, timeForChargedAttack);
+		spellChargeParticleModule.ClearAllEffects();
 	}
 }

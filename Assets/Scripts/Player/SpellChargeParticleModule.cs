@@ -1,16 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class SpellChargeParticleModule : MonoBehaviour {
 
 	public ParticleSystem ChargingParticleEmitter;
 	public GameObject FullyChargedParticleEmitter;
+	public Light ChargingLight;
+
+	public float surroundingParticleMaxRatePerSecond = 25f;
 
 	private float fullyChargedParticleSpeed = 15f;
 	private float fullyChargedParticleSize = 0.1f;
 	private float fullyChargedParticleLifetime = 0.5f;
 	private int numberOfFullyChargedParticleEmitters = 12;
 
-	private float surroundingParticleMaxRatePerSecond = 25f;
+	private float lightCurrentRange;
+	private float lightMaxRange = 1.5f;
 
 	private ParticleSystem.EmissionModule chargingParticleEmissionModule;
 	private ParticleSystem[] fullyChargedParticleEmitters;
@@ -18,7 +23,20 @@ public class SpellChargeParticleModule : MonoBehaviour {
 	void Start()
 	{
 		chargingParticleEmissionModule = ChargingParticleEmitter.emission;
-		InitialiseParticleEmitters();
+
+		if (FullyChargedParticleEmitter != null)
+			InitialiseParticleEmitters();
+	}
+
+	void Update()
+	{
+		if (lightCurrentRange > 0)
+			AddLightFlicker();
+	}
+
+	private void AddLightFlicker()
+	{
+		ChargingLight.range = lightCurrentRange + Mathf.Sin(Time.deltaTime) * 10f;
 	}
 
 	public void EmitFullyChargedParticles()
@@ -31,7 +49,11 @@ public class SpellChargeParticleModule : MonoBehaviour {
 
 	public void EmitChargingParticles(float timeHeld, float maximumChargeTime)
 	{
-		chargingParticleEmissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(Mathf.Min(timeHeld, maximumChargeTime) / maximumChargeTime * surroundingParticleMaxRatePerSecond);
+		var timeFraction = Mathf.Min(timeHeld, maximumChargeTime) / maximumChargeTime;
+		chargingParticleEmissionModule.rateOverTime = timeFraction * surroundingParticleMaxRatePerSecond;
+
+		lightCurrentRange = timeFraction * lightMaxRange;
+		AddLightFlicker();
 	}
 
 	private void InitialiseParticleEmitters()
@@ -48,5 +70,22 @@ public class SpellChargeParticleModule : MonoBehaviour {
 
 			fullyChargedParticleEmitters[i] = newParticleEffect.GetComponent<ParticleSystem>();
 		}
+	}
+
+	internal void ClearAllEffects()
+	{
+		ClearParticleEffects();
+		ClearLightEffects();
+	}
+
+	internal void ClearParticleEffects()
+	{
+		chargingParticleEmissionModule.rateOverTime = 0f;
+	}
+
+	internal void ClearLightEffects()
+	{
+		lightCurrentRange = 0f;
+		ChargingLight.range = 0f;
 	}
 }

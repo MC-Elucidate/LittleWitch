@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class WindMode : ASpellMode
 {
-    private LevitatableObject liftedObject;
+	public SpellChargeParticleModule spellChargeParticleModule;
+
+	private LevitatableObject liftedObject;
     private bool objectGrabbed = false;
     private bool buttonHeld = false;
     private float timeButtonHeld = 0f;
@@ -21,8 +23,9 @@ public class WindMode : ASpellMode
         if (buttonHeld)
         {
             timeButtonHeld += Time.deltaTime;
+			spellChargeParticleModule.EmitChargingParticles(timeButtonHeld, TimeToGrab);
 
-            if (timeButtonHeld > TimeToGrab)
+			if (timeButtonHeld > TimeToGrab)
                 GrabObject();
         }
 	}
@@ -61,7 +64,7 @@ public class WindMode : ASpellMode
                     liftedObject = newLiftedObject;
                 }
                 liftedObject.CastLevitate();
-            }
+			}
         }
     }
 
@@ -69,14 +72,20 @@ public class WindMode : ASpellMode
     {
         buttonHeld = false;
         timeButtonHeld = 0;
-    }
 
-    private void GrabObject()
+		if (liftedObject)
+			spellChargeParticleModule.ClearParticleEffects();
+		else
+			spellChargeParticleModule.ClearAllEffects();
+	}
+
+	private void GrabObject()
     {
         if (liftedObject == null)
             return;
 
         objectGrabbed = true;
         liftedObject.Grab(grabbedLocation);
-    }
+		spellChargeParticleModule.ClearParticleEffects();
+	}
 }

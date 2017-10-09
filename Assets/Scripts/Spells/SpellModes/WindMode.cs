@@ -9,6 +9,7 @@ public class WindMode : ASpellMode
 
 	private LevitatableObject liftedObject;
     private bool objectGrabbed = false;
+    private bool objectLifted = false;
     private bool buttonHeld = false;
     private float timeButtonHeld = 0f;
     private Transform grabbedLocation;
@@ -53,18 +54,22 @@ public class WindMode : ASpellMode
                 LevitatableObject newLiftedObject = hitInfo.collider.GetComponent<LevitatableObject>();
                 if (newLiftedObject == null)
                     return;
-
-                
-                if (liftedObject != null && newLiftedObject.name == liftedObject.name)
+                    
+                if (objectLifted && newLiftedObject == liftedObject)
                 {
-                    liftedObject = null;
+                    liftedObject.EndLevitate();
+                    objectLifted = false;
                 }
                 else
                 {
+                    if (objectLifted)
+                        liftedObject.EndLevitate();
+                    objectLifted = true;
                     liftedObject = newLiftedObject;
+                    liftedObject.Levitate();
                 }
-                liftedObject.CastLevitate();
-			}
+            }
+            
         }
     }
 
@@ -72,6 +77,9 @@ public class WindMode : ASpellMode
     {
         buttonHeld = false;
         timeButtonHeld = 0;
+
+        if (!objectLifted && !objectGrabbed)
+            liftedObject = null;
 
 		if (liftedObject)
 			spellChargeParticleModule.ClearParticleEffects();
@@ -81,10 +89,13 @@ public class WindMode : ASpellMode
 
 	private void GrabObject()
     {
+        if (objectGrabbed)
+            return;
         if (liftedObject == null)
             return;
-
+        
         objectGrabbed = true;
+        objectLifted = false;
         liftedObject.Grab(grabbedLocation);
 		spellChargeParticleModule.ClearParticleEffects();
 	}

@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(ChemistryObject))]
 public class LevitatableObject : MonoBehaviour {
 
-    private bool levitated = false;
+    public bool levitated = false;
     private bool reachedHeight = false;
     private Vector3 destination;
     private Vector3 startPosition;
@@ -21,7 +21,7 @@ public class LevitatableObject : MonoBehaviour {
     public float MaxFloatTime = 10;
     private float currentFloatTime;
 
-    private bool grabbed = false;
+    public bool grabbed = false;
 
 	public void Start () {
         rigidbody = GetComponent<Rigidbody>();
@@ -35,7 +35,7 @@ public class LevitatableObject : MonoBehaviour {
 
             if (grabbed)
             {
-                if((transform.position - grabbedLocation.position).sqrMagnitude > 1)
+                if((transform.position - grabbedLocation.position).sqrMagnitude > .25f)
                     transform.position = Vector3.Lerp(transform.position, grabbedLocation.position, 0.1f);
             }
 
@@ -63,11 +63,13 @@ public class LevitatableObject : MonoBehaviour {
         if (levitated)
             return;
 
+        chemistryObject.ChemistryInteraction(0, Element.Wind);
+
         levitated = true;
         rigidbody.useGravity = false;
         startPosition = transform.position;
+
         destination = new Vector3(transform.position.x, transform.position.y + LevitationHeight, transform.position.z);
-        chemistryObject.ChemistryInteraction(0, Element.Wind);
     }
 
     public void EndLevitate()
@@ -78,16 +80,9 @@ public class LevitatableObject : MonoBehaviour {
         currentFloatTime = 0f;
     }
 
-    public void CastLevitate()
-    {
-        if (levitated)
-            EndLevitate();
-        else
-            Levitate();
-    }
-
     public void Grab(Transform grabbedLocation)
     {
+        Levitate();
         grabbed = true;
         this.grabbedLocation = grabbedLocation;
     }

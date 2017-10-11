@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
         //to the event and updates the UI with a single call instead of per frame.
         UISetPlayerPortrait();
         UISetPlayerResources();
+        UISetReadySpellIcon();
     }
 
     #region StatusUI

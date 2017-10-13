@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class GemPickup : Pickup {
 
-    public int Value;
-    public AudioClip collectionSound;
+    [SerializeField]
+    private int Value;
+    [SerializeField]
+    private AudioClip collectionSound;
+
     private AudioSource audioSource;
     private Animator animator;
 

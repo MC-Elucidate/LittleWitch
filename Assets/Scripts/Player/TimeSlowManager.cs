@@ -18,18 +18,18 @@ public class TimeSlowManager : MonoBehaviour {
     private float fixedDeltaTime;
     private float timeToTriggerCameraEffect = 0.2f;
     private float timeToDestroySphere = 1f;
-    private PlayerMovementScript playerMovement;
+    private PlayerMovementManager playerMovement;
     private PlayerStatus playerStatus;
-    private CameraScript cameraScript;
+    private CameraManager cameraScript;
     private TimeSlowTintImageEffect cameraEffect;
     private bool TimeSlowActive = false;
     private AudioSource loopSource;
     private AudioSource startEndSource;
 
     void Start () {
-        playerMovement = gameObject.GetComponent<PlayerMovementScript>();
+        playerMovement = gameObject.GetComponent<PlayerMovementManager>();
         playerStatus = gameObject.GetComponent<PlayerStatus>();
-        cameraScript = Camera.main.GetComponent<CameraScript>();
+        cameraScript = Camera.main.GetComponent<CameraManager>();
         cameraEffect = Camera.main.GetComponent<TimeSlowTintImageEffect>();
         fixedDeltaTime = Time.fixedDeltaTime;
 

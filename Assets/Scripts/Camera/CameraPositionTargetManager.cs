@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraPositionTargetScript : MonoBehaviour {
+public class CameraPositionTargetManager : MonoBehaviour {
 
-    public Vector3 DistanceFromCharacter;
+    [SerializeField]
+    private Vector3 DistanceFromCharacter;
 
     void Start ()
     {

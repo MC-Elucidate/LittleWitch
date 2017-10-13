@@ -5,12 +5,8 @@ using UnityEngine;
 public class Fireball : Spell
 {
     public Transform explosionPrefab;
-
-    void Start()
-    {
-        base.Start();
-    }
-
+    private float totalDistanceTravelled = 0f;
+    
     void Update()
     {
         this.MoveProjectile();
@@ -31,5 +27,17 @@ public class Fireball : Spell
             chemObj.ChemistryInteraction(damage, element);
             Trigger();
         }
+    }
+
+    private void MoveProjectile()
+    {
+        this.transform.DebugDirectionRay();
+        var distanceToTravel = transform.forward * speed * Time.deltaTime;
+        totalDistanceTravelled += distanceToTravel.magnitude;
+        this.rigidBody.MovePosition(this.transform.position += distanceToTravel);
+
+        if (totalDistanceTravelled >= range)
+            Destroy(this.gameObject);
+
     }
 }

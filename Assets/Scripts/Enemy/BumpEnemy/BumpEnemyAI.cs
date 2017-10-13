@@ -8,7 +8,9 @@ public class BumpEnemyAI : MonoBehaviour {
     private EnemyBaseStatus status;
     private NavMeshAgent navAgent;
     private Transform player;
-    public float AggroDistance;
+
+    [SerializeField]
+    private float AggroDistance;
 
 	void Start () {
         status = gameObject.GetComponent<EnemyBaseStatus>();

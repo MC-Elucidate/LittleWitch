@@ -4,7 +4,9 @@ using UnityEngine;
 
 public abstract class Pickup : MonoBehaviour {
 
+    [SerializeField]
     protected float destroyTime;
+
     private bool collected = false;
 
 	void Start () {

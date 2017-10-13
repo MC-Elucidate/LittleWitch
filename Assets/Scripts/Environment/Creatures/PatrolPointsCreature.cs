@@ -5,8 +5,11 @@ using UnityEngine.AI;
 
 public class PatrolPointsCreature : MonoBehaviour {
 
-    public Vector3[] PatrolPoints;
+    [SerializeField]
+    private Vector3[] PatrolPoints;
+    [SerializeField]
     public float WaitTime;
+
     private NavMeshAgent navAgent;
     private int currentPointIndex;
     private bool isMoving;

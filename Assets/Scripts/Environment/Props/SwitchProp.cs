@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class SwitchProp : ChemistryObject {
 
+    [ReadOnly]
+    [SerializeField]
     private bool active = false;
     private TriggerableObject[] objectsToTrigger;
-    public GameObject[] connectedObjects;
+
+    [SerializeField]
+    private GameObject[] connectedObjects;
 
     #region ElementInteractions
     protected override void EarthInteraction()

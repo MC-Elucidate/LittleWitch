@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class ParticleSystemDisposer : MonoBehaviour {
 
-    private ParticleSystem particleSystem;
-	// Use this for initialization
+    private ParticleSystem particlesystem;
+	
 	void Start ()
     {
-        particleSystem = this.gameObject.GetComponent<ParticleSystem>();
+        particlesystem = this.gameObject.GetComponent<ParticleSystem>();
 	}
 	
-	// Update is called once per frame
 	void Update ()
     {
-        if (!particleSystem.IsAlive())
+        if (!particlesystem.IsAlive())
             Destroy(this.gameObject);
 	}
 }

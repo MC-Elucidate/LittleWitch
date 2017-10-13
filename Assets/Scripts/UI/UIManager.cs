@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         var UIExposer = GameObject.FindGameObjectWithTag(Helpers.Tags.PlayerHUD).GetComponent<UIExposer>();
-        playerPortrait = UIExposer.PlayerPortrait.GetComponent<Image>();
+        //playerPortrait = UIExposer.PlayerPortrait.GetComponent<Image>();
         heartBackgroundsPanel = UIExposer.PlayerHeartBackgroundsPanel;
         heartsPanel = UIExposer.PlayerHeartsPanel;
         focusBar = UIExposer.PlayerFocusBar;

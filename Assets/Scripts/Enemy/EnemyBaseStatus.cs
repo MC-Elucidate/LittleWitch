@@ -2,7 +2,8 @@
 
 public class EnemyBaseStatus : ChemistryObject {
 
-    public float Health;
+    [SerializeField]
+    protected float Health;
     private AIState state;
 
     void Start () {
@@ -13,7 +14,7 @@ public class EnemyBaseStatus : ChemistryObject {
 		
 	}
 
-    #region SpellInteractions
+    #region ElementInteractions
     protected override void FireInteraction()
     {
         print("My hair is on fire!");
@@ -55,7 +56,7 @@ public class EnemyBaseStatus : ChemistryObject {
     }
     #endregion
 
-    #region AILogic
+    #region AIState
     public bool IsDead()
     {
         return state == AIState.Dead;

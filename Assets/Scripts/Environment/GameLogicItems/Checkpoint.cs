@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour {
 
-
+    [ReadOnly]
+    [SerializeField]
     private bool active = false;
-    public Material activeMaterial;
-    public Material inactiveMaterial;
+
+    [SerializeField]
+    private Material activeMaterial;
+    [SerializeField]
+    private Material inactiveMaterial;
+
     private MeshRenderer meshRenderer;
 
 	void Start () {
@@ -22,13 +27,7 @@ public class Checkpoint : MonoBehaviour {
     {
         if (collider.gameObject.tag == Helpers.Tags.Player)
         {
-            PlayerStatus player = collider.gameObject.GetComponent<PlayerStatus>();
-            player.CheckpointTouched(this);
-            if (!active)
-            {
-                meshRenderer.material = activeMaterial;
-                active = true;
-            }
+            SetActive(collider.gameObject);
         }
     }
 
@@ -36,5 +35,16 @@ public class Checkpoint : MonoBehaviour {
     {
         meshRenderer.material = inactiveMaterial;
         active = false;
+    }
+
+    private void SetActive(GameObject playerObject)
+    {
+        PlayerStatus player = gameObject.GetComponent<PlayerStatus>();
+        player.CheckpointTouched(this);
+        if (!active)
+        {
+            meshRenderer.material = activeMaterial;
+            active = true;
+        }
     }
 }

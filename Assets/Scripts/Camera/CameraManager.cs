@@ -1,47 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CameraScript : MonoBehaviour
+public class CameraManager : MonoBehaviour
 {
 
-    public enum CameraMode
-    {
-        Free = 1,
-        Aim = 2,
-        HardLockOn = 3,
-    }
+    [ReadOnly]
+    public CameraMode state;
 
+    [HideInInspector]
     public float yawInput = 0;
+    [HideInInspector]
     public float pitchInput = 0;
-    public float freeSmooth = 0.2f;
-    public float aimSmooth = 0.5f;
-    public CameraMode state { get; private set; }
-    public float mouseSensitivity = 50f;
-    public float controllerSensitivity = 180f;
-    private float timeEffect = 1;
+
+    [SerializeField]
+    private float freeSmooth = 0.2f;
+    [SerializeField]
+    private float aimSmooth = 0.5f;
+
     private bool backToCharacter = false;
     private float yRangeLimit = 3.5f;
+    private float timeEffect = 1;
 
     private Transform lookTarget;
-    private CameraPositionPivotScript pivotTarget;
+    private CameraPositionPivotManager pivotTarget;
     private PlayerStatus playerStatus;
-    private PlayerMovementScript playerMovement;
+    private PlayerMovementManager playerMovement;
     private LockOnManager lockOnManager;
     public Vector3 distanceFromTarget = new Vector3(0f, 0f, -4f);
     private Vector3 distanceFromPlayerInHardLockOn = new Vector3(0f, 2f, -4f);
 
-    private const float PITCH_MAX_ANGLE = 45.0f;
-    private const float PITCH_MIN_ANGLE = -10.0f;
+    [SerializeField]
+    private float PITCH_MAX_ANGLE = 45.0f;
+    [SerializeField]
+    private float PITCH_MIN_ANGLE = -10.0f;
 
     private float oldPitch = 0f;
 
     void Start()
     {
         lookTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraFollowTarget).transform;
-        pivotTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraPositionPivot).GetComponent<CameraPositionPivotScript>();
+        pivotTarget = GameObject.FindGameObjectWithTag(Helpers.Tags.CameraPositionPivot).GetComponent<CameraPositionPivotManager>();
         playerStatus = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).GetComponent<PlayerStatus>();
-        playerMovement = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).GetComponent<PlayerMovementScript>();
+        playerMovement = GameObject.FindGameObjectWithTag(Helpers.Tags.Player).GetComponent<PlayerMovementManager>();
         lockOnManager = playerStatus.GetComponent<LockOnManager>();
         state = CameraMode.Free;
         transform.position = lookTarget.position + transform.rotation * distanceFromTarget;
@@ -50,31 +49,36 @@ public class CameraScript : MonoBehaviour
     void LateUpdate()
     {
         if (state == CameraMode.Free)
-        {
             BasicFreeCameraMovement();
             //JakCameraMovement();
-
-        }
+            
         else if (state == CameraMode.Aim)
-        {
-            transform.position = Vector3.Lerp(transform.position, pivotTarget.GetTagetPosition(), aimSmooth);
-            transform.LookAt(pivotTarget.transform.position);
-        }
+            AimCameraMovement();
 
         else if (state == CameraMode.HardLockOn)
-        {
-            if (lockOnManager.LockOnTarget == null)
-            {
-                TurnOffLockOn();
-                return;
-            }
-            Vector3 directionFromPlayer = (lockOnManager.LockOnTarget.transform.position - playerStatus.transform.position);
-            Vector3 positionFromPlayer = (playerStatus.transform.position - directionFromPlayer.normalized) + (directionFromPlayer.sqrMagnitude > 1 ? (transform.rotation * distanceFromPlayerInHardLockOn) : new Vector3(0,1,0));
-            transform.position = Vector3.Lerp(transform.position, positionFromPlayer, 0.1f);
-            transform.LookAt(lockOnManager.LockOnTarget.transform.position);
-        }
+            HardLockOnCameraMovement();
     }
 
+    private void AimCameraMovement()
+    {
+        transform.position = Vector3.Lerp(transform.position, pivotTarget.GetTagetPosition(), aimSmooth);
+        transform.LookAt(pivotTarget.transform.position);
+    }
+
+    private void HardLockOnCameraMovement()
+    {
+        if (lockOnManager.LockOnTarget == null)
+        {
+            TurnOffLockOn();
+            return;
+        }
+        Vector3 directionFromPlayer = (lockOnManager.LockOnTarget.transform.position - playerStatus.transform.position);
+        Vector3 positionFromPlayer = (playerStatus.transform.position - directionFromPlayer.normalized) + (directionFromPlayer.sqrMagnitude > 1 ? (transform.rotation * distanceFromPlayerInHardLockOn) : new Vector3(0, 1, 0));
+        transform.position = Vector3.Lerp(transform.position, positionFromPlayer, 0.1f);
+        transform.LookAt(lockOnManager.LockOnTarget.transform.position);
+    }
+
+    #region FunctionsToChangeCameraState
     private void EnterAimMode() { if (state != CameraMode.Aim) state = CameraMode.Aim; }
 
     private void LeaveAimMode() { if (state != CameraMode.Free) state = CameraMode.Free; }
@@ -96,6 +100,7 @@ public class CameraScript : MonoBehaviour
     {
         state = CameraMode.Free;
     }
+    #endregion
 
     #region TimeSlow
     private float DeltaTime

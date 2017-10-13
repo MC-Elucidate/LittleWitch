@@ -12,13 +12,11 @@ public class LockOnManager : MonoBehaviour {
     private float Radius = 20f;
     private bool SoftLockedOn = false;
     private bool HardLockedOn = false;
-
-    private MagicManager magicManager;
-    private CameraScript cameraScript;
+    
+    private CameraManager cameraManager;
 
     void Start () {
-        magicManager = gameObject.GetComponent<MagicManager>();
-        cameraScript = Camera.main.GetComponent<CameraScript>();
+        cameraManager = Camera.main.GetComponent<CameraManager>();
     }
 	
 	void Update () {
@@ -28,9 +26,9 @@ public class LockOnManager : MonoBehaviour {
         if (HardLockedOn && LockOnIndicator == null)
             TurnOffHardLockOn();
 
-        if (cameraScript.state == CameraScript.CameraMode.Free)
+        if (cameraManager.state == CameraMode.Free)
             CheckSoftLockOn();
-        else if (cameraScript.state == CameraScript.CameraMode.Aim && (SoftLockedOn || HardLockedOn))
+        else if (cameraManager.state == CameraMode.Aim && (SoftLockedOn || HardLockedOn))
         { TurnOffSoftLockOn(); TurnOffHardLockOn(); }
     }
 
@@ -89,7 +87,7 @@ public class LockOnManager : MonoBehaviour {
         if (!HardLockedOn)
             return;
         HardLockedOn = false;
-        cameraScript.TurnOffLockOn();
+        cameraManager.TurnOffLockOn();
         Destroy(LockOnIndicator);
         LockOnTarget = null;
     }
@@ -98,7 +96,7 @@ public class LockOnManager : MonoBehaviour {
     {
         SoftLockedOn = false;
         HardLockedOn = true;
-        cameraScript.LockOnToTarget();
+        cameraManager.LockOnToTarget();
     }
 
     //Draw LockOn Range

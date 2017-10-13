@@ -8,7 +8,9 @@ public class BarrelProp : ChemistryObject {
     private float ExplosionRadius = 3;
     private float ExplosionDamage = 20;
     private bool exploded = false;
-    public GameObject ExplosionEffect;
+
+    [SerializeField]
+    private GameObject ExplosionEffect;
 
     protected override void FireInteraction()
     {

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PreventForestFiresCreature : MonoBehaviour {
 
-    public TreeProp[] TreesToMonitor;
+    [SerializeField]
+    private TreeProp[] TreesToMonitor;
     private int TargetTreeIndex = -1;
     private State state = State.Idle;
     private float lerpRate = 0.01f;

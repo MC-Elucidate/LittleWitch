@@ -6,13 +6,15 @@ using UnityEngine;
 [RequireComponent(typeof(ChemistryObject))]
 public class LevitatableObject : MonoBehaviour {
 
-    public bool levitated = false;
-    private bool reachedHeight = false;
+    [ReadOnly]
+    public bool levitated;
+    [ReadOnly]
+    public bool grabbed;
+
+    private bool reachedHeight = false; 
     private Vector3 destination;
     private Vector3 startPosition;
     private Transform grabbedLocation;
-    private Rigidbody rigidbody;
-    private ChemistryObject chemistryObject;
 
     public float ThrowPower = 25f;
     
@@ -20,11 +22,15 @@ public class LevitatableObject : MonoBehaviour {
     public float TimeToRise = 3f;
     public float MaxFloatTime = 10;
     private float currentFloatTime;
+    
+    private Rigidbody rigidBody;
+    private ChemistryObject chemistryObject;
 
-    public bool grabbed = false;
 
-	public void Start () {
-        rigidbody = GetComponent<Rigidbody>();
+    public void Start () {
+        levitated = false;
+        grabbed = false;
+        rigidBody = GetComponent<Rigidbody>();
         chemistryObject = GetComponent<ChemistryObject>();
 	}
 
@@ -66,7 +72,7 @@ public class LevitatableObject : MonoBehaviour {
         chemistryObject.ChemistryInteraction(0, Element.Wind);
 
         levitated = true;
-        rigidbody.useGravity = false;
+        rigidBody.useGravity = false;
         startPosition = transform.position;
 
         destination = new Vector3(transform.position.x, transform.position.y + LevitationHeight, transform.position.z);
@@ -76,7 +82,7 @@ public class LevitatableObject : MonoBehaviour {
     {
         levitated = false;
         reachedHeight = false;
-        rigidbody.useGravity = true;
+        rigidBody.useGravity = true;
         currentFloatTime = 0f;
     }
 
@@ -96,6 +102,6 @@ public class LevitatableObject : MonoBehaviour {
     {
         EndLevitate();
         grabbed = false;
-        rigidbody.velocity = throwDirection.normalized * ThrowPower;
+        rigidBody.velocity = throwDirection.normalized * ThrowPower;
     }
 }

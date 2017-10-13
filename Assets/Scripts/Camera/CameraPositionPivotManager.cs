@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraPositionPivotScript : MonoBehaviour {
+public class CameraPositionPivotManager : MonoBehaviour {
 
+    [HideInInspector]
     public float pitchInput = 0;
-    public float pitchMaxAngle = 45;
-    public float pitchMinAngle = -10;
+
+    [SerializeField]
+    private float pitchMaxAngle = 45;
+    [SerializeField]
+    private float pitchMinAngle = -10;
+
     private float timeEffect = 1;
-    private CameraPositionTargetScript cameraPositionTarget;
+    private CameraPositionTargetManager cameraPositionTarget;
 
     void Start () {
-        cameraPositionTarget = gameObject.GetComponentInChildren<CameraPositionTargetScript>();
+        cameraPositionTarget = gameObject.GetComponentInChildren<CameraPositionTargetManager>();
 	}
 
 	void Update () {

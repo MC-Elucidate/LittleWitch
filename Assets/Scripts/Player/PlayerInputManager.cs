@@ -1,16 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-public class PlayerInputScript : MonoBehaviour
+public class PlayerInputManager : MonoBehaviour
 {
-    PlayerMovementScript playerMovement;
+    PlayerMovementManager playerMovement;
     MagicManager magicManager;
     UIManager uiManager;
     PlayerStatus playerStatus;
-    CameraScript cameraScript;
-    CameraPositionPivotScript cameraPivot;
-    TimeSlowManager timeSlow;
+    CameraManager cameraManager;
+    CameraPositionPivotManager cameraPivot;
     LockOnManager lockOn;
+
+    [SerializeField]
+    private float mouseSensitivity = 50f;
+    [SerializeField]
+    private float controllerSensitivity = 180f;
 
     private enum AxisState
     {
@@ -28,12 +32,11 @@ public class PlayerInputScript : MonoBehaviour
 
     void Start()
     {
-        playerMovement = gameObject.GetComponent<PlayerMovementScript>();
+        playerMovement = gameObject.GetComponent<PlayerMovementManager>();
         magicManager = gameObject.GetComponent<MagicManager>();
         uiManager = gameObject.GetComponent<UIManager>();
-        cameraScript = Camera.main.GetComponent<CameraScript>();
-        cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotScript>();
-        timeSlow = gameObject.GetComponent<TimeSlowManager>();
+        cameraManager = Camera.main.GetComponent<CameraManager>();
+        cameraPivot = gameObject.GetComponentInChildren<CameraPositionPivotManager>();
         playerStatus = gameObject.GetComponent<PlayerStatus>();
         lockOn = gameObject.GetComponent<LockOnManager>();
         RightTrigger = AxisState.NotHeld;
@@ -152,27 +155,27 @@ public class PlayerInputScript : MonoBehaviour
 
     void CameraInput()
     {
-        float controllerInputVertical = Input.GetAxis("CameraVerticalC") * cameraScript.controllerSensitivity;
-        float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * cameraScript.controllerSensitivity;
+        float controllerInputVertical = Input.GetAxis("CameraVerticalC") * controllerSensitivity;
+        float controllerInputHorizontal = Input.GetAxis("CameraHorizontalC") * controllerSensitivity;
         if (controllerInputHorizontal == 0)
         {
-            cameraScript.yawInput = Input.GetAxis("CameraHorizontalM") * cameraScript.mouseSensitivity;
-            playerMovement.yawInput = Input.GetAxis("CameraHorizontalM") * cameraScript.mouseSensitivity;
+            cameraManager.yawInput = Input.GetAxis("CameraHorizontalM") * mouseSensitivity;
+            playerMovement.yawInput = Input.GetAxis("CameraHorizontalM") * mouseSensitivity;
         }
         else
         {
-            cameraScript.yawInput = controllerInputHorizontal;
+            cameraManager.yawInput = controllerInputHorizontal;
             playerMovement.yawInput = controllerInputHorizontal;
         }
 
         if (controllerInputVertical == 0)
         {
-            cameraScript.pitchInput = Input.GetAxis("CameraVerticalM") * cameraScript.mouseSensitivity;
-            cameraPivot.pitchInput = Input.GetAxis("CameraVerticalM") * cameraScript.mouseSensitivity;
+            cameraManager.pitchInput = Input.GetAxis("CameraVerticalM") * mouseSensitivity;
+            cameraPivot.pitchInput = Input.GetAxis("CameraVerticalM") * mouseSensitivity;
         }
         else
         {
-            cameraScript.pitchInput = controllerInputVertical;
+            cameraManager.pitchInput = controllerInputVertical;
             cameraPivot.pitchInput = controllerInputVertical;
         }
     }
@@ -183,13 +186,13 @@ public class PlayerInputScript : MonoBehaviour
         {
             cameraPivot.ResetPosition();
             playerStatus.EnterAimMode();
-            cameraScript.SetCameraState();
+            cameraManager.SetCameraState();
             uiManager.ToggleCrosshair(true);
         }
         if (Input.GetButtonUp("Aim") || RightTrigger == AxisState.Released)
         {
             playerStatus.LeaveAimMode();
-            cameraScript.SetCameraState();
+            cameraManager.SetCameraState();
             uiManager.ToggleCrosshair(false);
         }
     }

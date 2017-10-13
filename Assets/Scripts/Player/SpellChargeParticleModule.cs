@@ -8,10 +8,6 @@ public class SpellChargeParticleModule : MonoBehaviour {
 	public Light ChargingLight;
 
 	public float surroundingParticleMaxRatePerSecond = 25f;
-
-	private float fullyChargedParticleSpeed = 15f;
-	private float fullyChargedParticleSize = 0.1f;
-	private float fullyChargedParticleLifetime = 0.5f;
 	private int numberOfFullyChargedParticleEmitters = 12;
 
 	private float lightCurrentRange;

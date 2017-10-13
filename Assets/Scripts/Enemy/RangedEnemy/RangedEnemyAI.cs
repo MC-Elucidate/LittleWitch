@@ -6,9 +6,12 @@ using UnityEngine.AI;
 
 public class RangedEnemyAI : MonoBehaviour {
 
-    public float AggroDistance;
-    public Transform ProjectilePrefab;
-    public float FireRate;
+    [SerializeField]
+    private float AggroDistance;
+    [SerializeField]
+    private float FireRate;
+    [SerializeField]
+    private Transform ProjectilePrefab;
 
     private EnemyBaseStatus status;
     private NavMeshAgent navAgent;

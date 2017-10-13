@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class JumpPadProp : MonoBehaviour {
 
-    public float JumpPadPower = 20f;
+    [SerializeField]
+    private float JumpPadPower = 20f;
     private AudioSource audioSource;
 
 	void Start () {
@@ -19,7 +20,7 @@ public class JumpPadProp : MonoBehaviour {
     {
         if (other.gameObject.tag == Helpers.Tags.Player)
         {
-            other.gameObject.GetComponent<PlayerMovementScript>().SteppedOnJumpPad(JumpPadPower);
+            other.gameObject.GetComponent<PlayerMovementManager>().SteppedOnJumpPad(JumpPadPower);
             audioSource.Play();
         }
     }

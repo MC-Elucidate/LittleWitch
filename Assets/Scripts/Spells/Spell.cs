@@ -6,7 +6,6 @@ public abstract class Spell: MonoBehaviour
     public string spellName;
     public string inputString;
     public Element element;
-    public SpellType type;
     public float damage;
     public float range;
     public float aoe;
@@ -14,12 +13,11 @@ public abstract class Spell: MonoBehaviour
 
     public Transform castEffectPrefab;
 
-    private float totalDistanceTravelled = 0f;
-    private Rigidbody rigidbody;
+    protected Rigidbody rigidBody;
 
     public virtual void Start()
     {
-        this.rigidbody = this.transform.GetComponent<Rigidbody>();
+        this.rigidBody = this.transform.GetComponent<Rigidbody>();
         if(castEffectPrefab != null)
             Instantiate(castEffectPrefab, this.transform.position, this.transform.rotation);
     }
@@ -29,38 +27,4 @@ public abstract class Spell: MonoBehaviour
     {
         Debug.Log("Spell has been triggered!");
     }
-
-    public virtual void MoveProjectile()
-    {
-        if (type == SpellType.Projectile)
-        {
-            this.transform.DebugDirectionRay();
-            var distanceToTravel = transform.forward * speed * Time.deltaTime;
-            totalDistanceTravelled += distanceToTravel.magnitude;
-            this.rigidbody.MovePosition(this.transform.position += distanceToTravel);
-
-            if (totalDistanceTravelled >= range)
-                Destroy(this.gameObject);
-        }
-        
-    }
-}
-
-public enum Element
-{
-    Earth,
-    Fire,
-    Water,
-    Wind,
-    Ice,
-    None
-}
-
-public enum SpellType
-{
-    AoE,
-    Cone,
-    Projectile,
-    Ray,
-    Self
 }

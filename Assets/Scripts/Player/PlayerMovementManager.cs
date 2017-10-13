@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovementScript : MonoBehaviour
+public class PlayerMovementManager : MonoBehaviour
 {
 
     //GameObjects
@@ -207,14 +207,14 @@ public class PlayerMovementScript : MonoBehaviour
         if (otherObject.root.tag == Helpers.Tags.MovingPlatform)
         {
             this.transform.parent = otherObject;
-            try
-            {
-                otherObject.root.GetComponentInChildren<Platform>().StoodOn();
-            }
-            catch (System.Exception)
-            {
-                Debug.Log("Something went wrong calling StoodOn()");
-            }
+            //try
+            //{
+            //    otherObject.root.GetComponentInChildren<Platform>().StoodOn();
+            //}
+            //catch (System.Exception)
+            //{
+            //    Debug.Log("Something went wrong calling StoodOn()");
+            //}
         }
         else
             this.transform.parent = null;

@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class TreeProp : ChemistryObject {
 
-    public GameObject fireParticleSystem;
+    [SerializeField]
+    private GameObject fireParticleSystem;
     private GameObject fire;
+
+    [ReadOnly]
     public Element elementState = Element.None;
 
     protected override void EarthInteraction()

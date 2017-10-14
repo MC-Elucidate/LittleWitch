@@ -87,10 +87,10 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        if (playerStatus.Focus != playerMana)
+        if (playerStatus.Mana != playerMana)
         {
-            playerMana = (int)playerStatus.Focus;
-            this.focusBar.localScale = new Vector3((float)playerStatus.Focus / PlayerStatus.MaxFocus, 1f, 1f);
+            playerMana = (int)playerStatus.Mana;
+            this.focusBar.localScale = new Vector3((float)playerStatus.Mana / PlayerStatus.MaxMana, 1f, 1f);
         }
 
         if (playerStatus.Gems != gems)

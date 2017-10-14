@@ -5,22 +5,24 @@ using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour {
 
-	public const int MaxHealth = 6;
-	public const int MaxFocus = 100;
-	public int Health = 6;
-	public float Focus = 100;
-	public int Gems = 0;
-	public PlayerState state;
-	private Checkpoint checkpoint;
+    [SerializeField]
+    public const int MaxHealth = 6;
+    [SerializeField]
+    public const int MaxMana = 100;
 
-	public enum PlayerState
-	{
-		FreeMovement,
-		Aiming,
-		Dead
-	}
+    public int Health { get; private set; }
+    public float Mana { get; private set; }
+    public int Gems { get; private set; }
+
+    [ReadOnly]
+    public PlayerState state;
+
+	private Checkpoint checkpoint;
  
 	void Start () {
+        Health = MaxHealth;
+        Mana = MaxMana;
+        Gems = 0;
 		state = PlayerState.FreeMovement;
 	}
 	
@@ -52,11 +54,11 @@ public class PlayerStatus : MonoBehaviour {
 
 	public bool UseFocus(float amount)
 	{
-		if (amount <= Focus)
+		if (amount <= Mana)
 		{
-			Focus -= amount;
-			if (Focus < 0)
-				Focus = 0;
+			Mana -= amount;
+			if (Mana < 0)
+				Mana = 0;
 			return true;
 		}
 		else
@@ -67,14 +69,19 @@ public class PlayerStatus : MonoBehaviour {
 
 	public void RegenFocus(float amount)
 	{
-		Focus += amount;
-		if (Focus > MaxFocus)
-			Focus = MaxFocus;
+		Mana += amount;
+		if (Mana > MaxMana)
+			Mana = MaxMana;
 	}
 
 	public void AddGems(int amount)
 	{
 		Gems += amount;
 	}
+
+    public void TakeDamage(int damage)
+    {
+        Health -= damage;
+    }
 	
 }

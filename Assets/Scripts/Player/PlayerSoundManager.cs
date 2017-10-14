@@ -4,10 +4,14 @@ public class PlayerSoundManager : MonoBehaviour {
 
     private AudioSource audioSource;
 
-    public AudioClip JumpSound;
-    public AudioClip DamageReceivedSound;
-    public AudioClip FireSpellSound;
-    public AudioClip FootstepSound;
+    [SerializeField]
+    private AudioClip JumpSound;
+    [SerializeField]
+    private AudioClip DamageReceivedSound;
+    [SerializeField]
+    private AudioClip FireSpellSound;
+    [SerializeField]
+    private AudioClip FootstepSound;
 
     void Start () {
         audioSource = gameObject.GetComponent<AudioSource>();

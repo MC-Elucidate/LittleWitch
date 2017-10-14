@@ -4,26 +4,38 @@ using UnityEngine;
 
 public class PlayerMovementManager : MonoBehaviour
 {
-
-    //GameObjects
+    #region Variables
     private Animator animator;
     private CharacterController characterController;
     private PlayerStatus playerStatus;
     private PlayerSoundManager sounds;
-    public Transform cameraTransform;
+    private Transform cameraTransform;
 
-    //Movement variables
+    [Header("Movement Values")]
+    [SerializeField]
     public Vector3 velocity;
+    [SerializeField]
     public float sidewaysInput;
+    [SerializeField]
     public float forwardInput;
+    [SerializeField]
     public float movespeed = 10f;
+    [SerializeField]
     public float gravity = -10f;
+    [SerializeField]
     public float rotationDampSpeed = 0.5f;
+    [SerializeField]
     public float airMovementAcceleration = 0.8f;
+    [SerializeField]
+    private LayerMask platformsLayer;
+    [ReadOnly]
+    [SerializeField]
+    private bool isGrounded;
+    [HideInInspector]
+    public bool IsGrounded { get { return isGrounded; } }
     private float timeEffect = 1;
-    public bool isGrounded;
-    public LayerMask platformsLayer;
 
+    #region PivotVariables
     //private float directionDampTime = 0.25f;
     //private float speedDampTime = 0.05f;
     //private float rotationDegreesPerSecond = 120f;
@@ -32,17 +44,22 @@ public class PlayerMovementManager : MonoBehaviour
     //public float directionSpeed = 3f;
     //public float speed = 0f;
     //public float locomotionThreshold = 0.7f;
+    #endregion
 
-
-    //Jump variables
-    public bool jumping = false;
-    public float jumpPower = 4f;
-    public float jumpHoldMax = 0.35f;
-    public float jumpLeniencyTime = 0.25f;
+    [Header("Jump Values")]
+    [ReadOnly]
+    [SerializeField]
+    private bool jumping = false;
+    [SerializeField]
+    private float jumpPower = 4f;
+    [SerializeField]
+    private float jumpHoldMax = 0.35f;
+    [SerializeField]
+    private float jumpLeniencyTime = 0.25f;
     private float airTime = 0;
     private float jumpHoldCurrent = 0f;
-
-    //Camera variables
+    
+    [HideInInspector]
     public float yawInput;
 
     //Hashes
@@ -51,6 +68,7 @@ public class PlayerMovementManager : MonoBehaviour
     private int pivotRightHashID;
     private int idlePivotLeftHashID;
     private int idlePivotRightHashID;
+    #endregion
 
     void Start()
     {
@@ -79,7 +97,7 @@ public class PlayerMovementManager : MonoBehaviour
     void UpdateMovement()
     {
         Vector3 movementVector;
-        if (playerStatus.state == PlayerStatus.PlayerState.Aiming)
+        if (playerStatus.state == PlayerState.Aiming)
             movementVector = new Vector3(0, 0, 0);
 
         else
@@ -120,7 +138,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void AimRotation()
     {
-        if (playerStatus.state != PlayerStatus.PlayerState.Aiming)
+        if (playerStatus.state != PlayerState.Aiming)
             return;
 
         if (yawInput != 0)

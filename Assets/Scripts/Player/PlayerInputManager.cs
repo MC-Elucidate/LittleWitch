@@ -11,6 +11,7 @@ public class PlayerInputManager : MonoBehaviour
     CameraPositionPivotManager cameraPivot;
     LockOnManager lockOn;
 
+    [Header("Camera Sensitivity")]
     [SerializeField]
     private float mouseSensitivity = 50f;
     [SerializeField]

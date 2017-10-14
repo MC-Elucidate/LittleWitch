@@ -6,13 +6,20 @@ public class PlayerDamageManager : MonoBehaviour {
 
 
     private Vulnerability vulnerability;
-    public float invulnerablePeriod = 1.5f;
-    public float flashRate = 0.1f;
-    public Material material;
+
+    [SerializeField]
+    private float invulnerablePeriod = 1.5f;
+    [SerializeField]
+    private float flashRate = 0.1f;
+    [SerializeField]
+    private Material material;
+
     private PlayerStatus status;
     private Color defaultColor = Color.white;
-    public Color flashColor = Color.red;
     private PlayerSoundManager sounds;
+
+    [SerializeField]
+    private Color flashColor = Color.red;
 
     private enum Vulnerability
     {
@@ -41,7 +48,7 @@ public class PlayerDamageManager : MonoBehaviour {
             return;
 
         sounds.PlayDamageReceivedSound();
-        status.Health -= damage;
+        status.TakeDamage(damage);
         if (status.Health <= 0)
             status.Respawn();
         else

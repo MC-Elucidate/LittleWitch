@@ -85,9 +85,9 @@ public class CameraManager : MonoBehaviour
 
     public void SetCameraState()
     {
-        if (playerStatus.state == PlayerStatus.PlayerState.Aiming)
+        if (playerStatus.state == PlayerState.Aiming)
             EnterAimMode();
-        else if (playerStatus.state == PlayerStatus.PlayerState.FreeMovement)
+        else if (playerStatus.state == PlayerState.FreeMovement)
             LeaveAimMode();
     }
 
@@ -148,7 +148,7 @@ public class CameraManager : MonoBehaviour
 
         Vector3 lerpDestination = lookTarget.position;
             bool cameraInYRange = Mathf.Abs(lerpDestination.y - transform.position.y) < yRangeLimit;
-            bool playerInAir = (playerMovement.velocity.y > 0 || (playerMovement.velocity.y < 0 && !playerMovement.isGrounded));
+            bool playerInAir = (playerMovement.velocity.y > 0 || (playerMovement.velocity.y < 0 && !playerMovement.IsGrounded));
             if (playerInAir)
             {
                 if (cameraInYRange && !backToCharacter)

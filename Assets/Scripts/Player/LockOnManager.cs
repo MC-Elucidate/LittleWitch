@@ -4,16 +4,26 @@ using UnityEngine;
 
 public class LockOnManager : MonoBehaviour {
 
-    private GameObject LockOnIndicator;
-    public GameObject LockOnTarget { get; private set; }
-    public GameObject LockOnIndicatorPrefab;
-    public LayerMask LockOnLayer;
 
+    private GameObject LockOnIndicator;
+    private CameraManager cameraManager;
     private float Radius = 20f;
+
+    [HideInInspector]
+    public GameObject LockOnTarget { get; private set; }
+
+    [SerializeField]
+    private GameObject LockOnIndicatorPrefab;
+    [SerializeField]
+    private LayerMask LockOnLayer;
+
+    [ReadOnly]
+    [SerializeField]
     private bool SoftLockedOn = false;
+    [ReadOnly]
+    [SerializeField]
     private bool HardLockedOn = false;
     
-    private CameraManager cameraManager;
 
     void Start () {
         cameraManager = Camera.main.GetComponent<CameraManager>();
@@ -29,7 +39,10 @@ public class LockOnManager : MonoBehaviour {
         if (cameraManager.state == CameraMode.Free)
             CheckSoftLockOn();
         else if (cameraManager.state == CameraMode.Aim && (SoftLockedOn || HardLockedOn))
-        { TurnOffSoftLockOn(); TurnOffHardLockOn(); }
+        {
+            TurnOffSoftLockOn();
+            TurnOffHardLockOn();
+        }
     }
 
     public void CheckSoftLockOn()
@@ -56,12 +69,8 @@ public class LockOnManager : MonoBehaviour {
         if (LockOnTarget == null || LockOnTarget.name != closestObject.name)
         {
             TurnOffSoftLockOn();
-            LockOnTarget = closestObject.gameObject;
-            SoftLockedOn = true;
-
-            Transform LockOnIndicatorTransform = Helpers.FindObjectInChildren(LockOnTarget, "LockOnIndicatorPosition").transform;
-            LockOnIndicator = Instantiate(LockOnIndicatorPrefab, LockOnIndicatorTransform.position, Quaternion.identity);
-            LockOnIndicator.transform.parent = LockOnIndicatorTransform;
+            TurnOnSoftLockOn(closestObject.gameObject);
+            
         }
     }
 
@@ -72,6 +81,16 @@ public class LockOnManager : MonoBehaviour {
         SoftLockedOn = false;
         Destroy(LockOnIndicator);
         LockOnTarget = null;
+    }
+
+    private void TurnOnSoftLockOn(GameObject target)
+    {
+        LockOnTarget = target;
+        SoftLockedOn = true;
+
+        Transform LockOnIndicatorTransform = Helpers.FindObjectInChildren(LockOnTarget, "LockOnIndicatorPosition").transform;
+        LockOnIndicator = Instantiate(LockOnIndicatorPrefab, LockOnIndicatorTransform.position, Quaternion.identity);
+        LockOnIndicator.transform.parent = LockOnIndicatorTransform;
     }
 
     public void HardLockOnPressed()

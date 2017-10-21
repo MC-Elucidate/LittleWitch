@@ -65,7 +65,10 @@ public class LockOnManager : MonoBehaviour {
                 closestObject = objectInRange;
             }
         }
-        
+
+        if (closestObject == null)
+            return;
+
         if (LockOnTarget == null || LockOnTarget.name != closestObject.name)
         {
             TurnOffSoftLockOn();

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class ChemistryObject : MonoBehaviour {
-    
+
+    [ReadOnly]
+    public Element elementalState = Element.None;
 
 	void Start () {
 		
@@ -13,12 +15,15 @@ public abstract class ChemistryObject : MonoBehaviour {
 
     }
 
-   protected void OnCollisionEnter(Collision collision)
+    protected void OnCollisionEnter(Collision collision)
     {
-        //if (collision.gameObject.tag == Helpers.Tags.Spell)
-        //{
-          //  SpellInteract(collision.gameObject.GetComponent<Spell>());
-        //}
+        ChemistryObject otherObject = collision.gameObject.GetComponent<ChemistryObject>();
+
+        if(collision.rigidbody != null)
+            TakePhysicsDamage(collision.relativeVelocity, collision.rigidbody.mass);
+
+        if (otherObject != null)
+            ChemistryInteraction(0, otherObject.elementalState);
     }
 
     protected void SpellInteract(Spell spell)
@@ -54,6 +59,12 @@ public abstract class ChemistryObject : MonoBehaviour {
             default:
                 break;
         }
+    }
+
+    private void TakePhysicsDamage(Vector3 collisionVelocity, float otherWeight)
+    {
+        if (collisionVelocity.sqrMagnitude > 10)
+            TakeDamage(otherWeight);
     }
 
     protected abstract void FireInteraction();

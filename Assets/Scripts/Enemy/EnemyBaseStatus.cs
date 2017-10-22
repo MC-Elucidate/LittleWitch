@@ -81,12 +81,28 @@ public class EnemyBaseStatus : ChemistryObject {
     {
         state = AIState.Idle;
     }
+
+    public void Freeze()
+    {
+        state = AIState.Frozen;
+    }
+
+    public void UnFreeze()
+    {
+        state = AIState.Idle;
+    }
+
+    public bool IsFrozen()
+    {
+        return state == AIState.Frozen;
+    }
     #endregion
 
     private enum AIState
     {
         Idle,
         Aggro,
-        Dead
+        Dead,
+        Frozen
     }
 }

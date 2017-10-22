@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e076c756295ad41459be6a19c909bb72
+timeCreated: 1508664977
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - frozenMaterial: {fileID: 2100000, guid: af12177802401274cbe2558fde14ad6e, type: 2}
+  - freezeSound: {fileID: 8300000, guid: c0a18fa8395d5a64d81a1dcfc66cbb84, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

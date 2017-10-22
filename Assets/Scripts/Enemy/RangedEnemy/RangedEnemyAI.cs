@@ -32,6 +32,8 @@ public class RangedEnemyAI : MonoBehaviour {
         {
             Die();
         }
+        else if (status.IsFrozen())
+            return;
         else
         {
             if (lastShotTime > 0)

@@ -70,20 +70,24 @@ public class MagicManager : MonoBehaviour
 
     public void ActivateFireMode()
     {
-        if(activeSpellMode != fireMode)
-        activeSpellMode = fireMode;
+        ChangeSpellMode(fireMode);
     }
 
     public void ActivateWindMode()
     {
-        if (activeSpellMode != windMode)
-            activeSpellMode = windMode;
+        ChangeSpellMode(windMode);
     }
 
     public void ActivateIceMode()
     {
-        if (activeSpellMode != iceMode)
-            activeSpellMode = iceMode;
+        ChangeSpellMode(iceMode);
+    }
+
+    private void ChangeSpellMode(ASpellMode nextMode)
+    {
+        activeSpellMode.OnSpellChangedFrom();
+        if (activeSpellMode != nextMode)
+            activeSpellMode = nextMode;
     }
 
 }

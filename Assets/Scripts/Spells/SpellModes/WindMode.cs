@@ -81,11 +81,11 @@ public class WindMode : ASpellMode
         if (!objectLifted && !objectGrabbed)
             liftedObject = null;
 
-		if (liftedObject)
-			spellChargeParticleModule.ClearParticleEffects();
-		else
-			spellChargeParticleModule.ClearAllEffects();
-	}
+        if (liftedObject)
+            spellChargeParticleModule.ClearParticleEffects();
+        else
+            spellChargeParticleModule.ClearAllEffects();
+    }
 
 	private void GrabObject()
     {
@@ -99,4 +99,28 @@ public class WindMode : ASpellMode
         liftedObject.Grab(grabbedLocation);
 		spellChargeParticleModule.ClearParticleEffects();
 	}
+
+    public override void OnSpellChangedFrom()
+    {
+
+        if (liftedObject != null)
+        {
+            if (objectGrabbed)
+                liftedObject.ThrowAtTarget(liftedObject.transform.position);
+
+            else if (objectLifted)
+                liftedObject.EndLevitate();
+        }
+
+       
+        objectGrabbed = false;
+        objectLifted = false;
+        buttonHeld = false;
+        timeButtonHeld = 0;
+        liftedObject = null;
+            
+
+        spellChargeParticleModule.ClearAllEffects();
+
+    }
 }

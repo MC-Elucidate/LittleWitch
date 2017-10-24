@@ -27,4 +27,9 @@ public class IceMode : ASpellMode {
     {
         Destroy(coneInstance);
     }
+
+    public override void OnSpellChangedFrom()
+    {
+        Destroy(coneInstance);
+    }
 }

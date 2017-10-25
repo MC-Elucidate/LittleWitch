@@ -58,7 +58,14 @@ public class PlayerMovementManager : MonoBehaviour
     private float jumpLeniencyTime = 0.25f;
     private float airTime = 0;
     private float jumpHoldCurrent = 0f;
-    
+
+    [Header("Glide Values")]
+    [ReadOnly]
+    [SerializeField]
+    private bool gliding = false;
+    [SerializeField]
+    private float glideYVelocity;
+
     [HideInInspector]
     public float yawInput;
 
@@ -122,7 +129,7 @@ public class PlayerMovementManager : MonoBehaviour
         //{
             velocity.x = movementVector.x;
             velocity.z = movementVector.z;
-            if (!jumping)
+            if (!jumping && !gliding)
             {
                 if(isGrounded)
                     velocity.y = gravity;
@@ -146,7 +153,7 @@ public class PlayerMovementManager : MonoBehaviour
     }
 
     #region Jump
-    public void Jump()
+    public void JumpPressed()
     {
         bool jumpIsWithinLeniencyWindow = !isGrounded && airTime <= jumpLeniencyTime;
 
@@ -156,9 +163,12 @@ public class PlayerMovementManager : MonoBehaviour
             velocity.y = jumpPower;
             sounds.PlayJumpSound();
 
-            if(jumpIsWithinLeniencyWindow)
+            if (jumpIsWithinLeniencyWindow)
                 print("Saved by the leniency");
         }
+
+        else if (!IsGrounded)
+            StartGlide();
     }
 
     public void SteppedOnJumpPad(float jumpPadPower)
@@ -167,13 +177,30 @@ public class PlayerMovementManager : MonoBehaviour
         velocity.y = jumpPadPower;
     }
 
-    public void EndJump()
+    public void JumpReleased()
+    {
+        if (gliding)
+            EndGlide();
+        
+            EndJump();
+    }
+
+    private void EndJump()
     {
         jumping = false;
         jumpHoldCurrent = 0f;
     }
 
+    private void StartGlide()
+    {
+        gliding = true;
+        velocity.y = glideYVelocity;
+    }
 
+    private void EndGlide()
+    {
+        gliding = false;
+    }
 
     private void CheckJumpHoldTimer()
     {
@@ -216,7 +243,10 @@ public class PlayerMovementManager : MonoBehaviour
         if (previouslyGrounded && !isGrounded && !jumping)
             velocity.y = 0;
         if (!previouslyGrounded && isGrounded)
+        {
+            EndGlide();
             EndJump();
+        }
         
     }
 

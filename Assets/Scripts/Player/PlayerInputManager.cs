@@ -149,9 +149,9 @@ public class PlayerInputManager : MonoBehaviour
         playerMovement.sidewaysInput = Input.GetAxis("Horizontal");
         
         if (Input.GetButtonDown("Jump"))
-            playerMovement.Jump();
+            playerMovement.JumpPressed();
         if (Input.GetButtonUp("Jump"))
-            playerMovement.EndJump();
+            playerMovement.JumpReleased();
     }
 
     void CameraInput()

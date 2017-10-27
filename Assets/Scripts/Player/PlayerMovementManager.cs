@@ -12,10 +12,13 @@ public class PlayerMovementManager : MonoBehaviour
     private Transform cameraTransform;
 
     [Header("Movement Values")]
+    [ReadOnly]
     [SerializeField]
     public Vector3 velocity;
+    [ReadOnly]
     [SerializeField]
     public float sidewaysInput;
+    [ReadOnly]
     [SerializeField]
     public float forwardInput;
     [SerializeField]
@@ -66,6 +69,14 @@ public class PlayerMovementManager : MonoBehaviour
     [SerializeField]
     private float glideYVelocity;
 
+    [Header("Dash Values")]
+    [SerializeField]
+    private float dashDuration;
+    [SerializeField]
+    private float dashSpeed;
+    private Vector3 dashVelocity;
+    private bool Dashing { get { return playerStatus.state == PlayerState.Dashing; } set { } }
+
     [HideInInspector]
     public float yawInput;
 
@@ -107,6 +118,9 @@ public class PlayerMovementManager : MonoBehaviour
         if (playerStatus.state == PlayerState.Aiming)
             movementVector = new Vector3(0, 0, 0);
 
+        else if (Dashing)
+            movementVector = dashVelocity;
+
         else
         {
             Quaternion directionToMove = Quaternion.LookRotation(Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up), Vector3.up);
@@ -127,15 +141,17 @@ public class PlayerMovementManager : MonoBehaviour
         //}
         //else //Apply regular movement
         //{
-            velocity.x = movementVector.x;
-            velocity.z = movementVector.z;
-            if (!jumping && !gliding)
-            {
-                if(isGrounded)
-                    velocity.y = gravity;
-                else
-                    velocity.y += gravity * DeltaTime;
-            }
+        velocity.x = movementVector.x;
+        velocity.z = movementVector.z;
+        if (!jumping && !gliding)
+        {
+            if (Dashing)
+                velocity.y = 0;
+            else if (isGrounded)
+                velocity.y = gravity;
+            else
+                velocity.y += gravity * DeltaTime;
+        }
         //}
         if (movementVector.magnitude != 0)
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(movementVector.normalized), rotationDampSpeed);
@@ -156,6 +172,9 @@ public class PlayerMovementManager : MonoBehaviour
     public void JumpPressed()
     {
         bool jumpIsWithinLeniencyWindow = !isGrounded && airTime <= jumpLeniencyTime;
+
+        if (Dashing)
+            return;
 
         if (isGrounded || jumpIsWithinLeniencyWindow)
         {
@@ -269,6 +288,25 @@ public class PlayerMovementManager : MonoBehaviour
     }
     #endregion
 
+    #region Dash
+    public void DashPressed()
+    {
+        if (Dashing)
+            return;
+
+        playerStatus.state = PlayerState.Dashing;
+        dashVelocity = transform.forward * dashSpeed;
+        StartCoroutine(EndDash());
+    }
+
+    private IEnumerator EndDash()
+    {
+        yield return new WaitForSecondsRealtime(dashDuration);
+        playerStatus.state = PlayerState.FreeMovement;
+        dashVelocity = new Vector3();
+    }
+    #endregion
+
     #region Animation
     public bool IsInLocomotion()
     {
@@ -283,6 +321,7 @@ public class PlayerMovementManager : MonoBehaviour
     }
     private void SetAnimatorValues()
     {
+        animator.SetBool("Dashing", Dashing);
         float speed = new Vector2(velocity.x, velocity.z).sqrMagnitude;
         animator.SetFloat("Speed", speed);
         animator.SetBool("InAir", !isGrounded);

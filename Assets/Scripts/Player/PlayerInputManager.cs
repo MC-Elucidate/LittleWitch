@@ -152,6 +152,8 @@ public class PlayerInputManager : MonoBehaviour
             playerMovement.JumpPressed();
         if (Input.GetButtonUp("Jump"))
             playerMovement.JumpReleased();
+        if (Input.GetButtonDown("Dash"))
+            playerMovement.DashPressed();
     }
 
     void CameraInput()

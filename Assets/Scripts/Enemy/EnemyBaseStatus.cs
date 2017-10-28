@@ -6,6 +6,9 @@ public class EnemyBaseStatus : ChemistryObject {
     protected float Health;
     private AIState state;
 
+    [SerializeField]
+    private GameObject deathPoof;
+
     void Start () {
         state = AIState.Idle;
     }
@@ -52,7 +55,8 @@ public class EnemyBaseStatus : ChemistryObject {
     protected virtual void Die()
     {
         state = AIState.Dead;
-        Destroy(gameObject, 1.5f);
+        Destroy(Instantiate(deathPoof, transform.position, Quaternion.identity), 2f);
+        Destroy(gameObject);
     }
     #endregion
 

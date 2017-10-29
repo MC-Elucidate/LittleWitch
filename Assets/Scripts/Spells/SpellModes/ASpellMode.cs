@@ -5,9 +5,10 @@ using UnityEngine;
 public abstract class ASpellMode : MonoBehaviour {
 
     public Sprite spellIcon;
+    protected PlayerStatus playerStatus;
 
-    void Start () {
-		
+    protected virtual void Start () {
+        playerStatus = GetComponentInParent<PlayerStatus>();
 	}
 	
 	void Update () {

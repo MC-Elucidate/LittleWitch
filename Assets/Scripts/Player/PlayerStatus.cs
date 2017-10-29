@@ -52,7 +52,7 @@ public class PlayerStatus : MonoBehaviour {
 
 	public void LeaveAimMode() { state = PlayerState.FreeMovement; }
 
-	public bool UseFocus(float amount)
+	public bool UseMana(float amount)
 	{
 		if (amount <= Mana)
 		{

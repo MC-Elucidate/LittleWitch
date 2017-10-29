@@ -14,7 +14,17 @@ public class FireMode : ASpellMode
 	private bool isCharging = false;
 	private bool fullyCharged = false;
 
-	public void Update()
+    [SerializeField]
+    private float fireballManaCost;
+    [SerializeField]
+    private float chargedFireballManaCost;
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    public void Update()
 	{
 		if (isCharging)
 		{
@@ -36,12 +46,12 @@ public class FireMode : ASpellMode
 
 	public override void AttackReleased(Vector3 spawnPosition, Vector3 spawnDirection, Vector3? targetPosition = null)
 	{
-		if (timeHeld >= timeForChargedAttack)
-			GameObject.Instantiate(chargedFireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));
-		else
-			GameObject.Instantiate(fireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));
+        if (timeHeld >= timeForChargedAttack)
+            CastChargedFireball(spawnPosition, spawnDirection);
+        else
+            CastFireball(spawnPosition, spawnDirection);
 
-		ResetAttack();
+        ResetAttack();
 	}
 
 	private void ResetAttack()
@@ -55,5 +65,16 @@ public class FireMode : ASpellMode
     public override void OnSpellChangedFrom()
     {
         ResetAttack();
+    }
+
+    private void CastFireball(Vector3 spawnPosition, Vector3 spawnDirection)
+    {
+        if (playerStatus.UseMana(fireballManaCost))
+            GameObject.Instantiate(fireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));
+    }
+    private void CastChargedFireball(Vector3 spawnPosition, Vector3 spawnDirection)
+    {
+        if (playerStatus.UseMana(chargedFireballManaCost))
+            GameObject.Instantiate(chargedFireballPrefab, spawnPosition, Quaternion.LookRotation(spawnDirection, Vector3.up));
     }
 }

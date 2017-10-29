@@ -41,7 +41,7 @@ public class TimeSlowManager : MonoBehaviour {
 	void Update () {
         if (TimeSlowActive)
         {
-            bool enoughFocus = playerStatus.UseFocus(FocusConsumptionPerSecond * Time.deltaTime / Time.timeScale);
+            bool enoughFocus = playerStatus.UseMana(FocusConsumptionPerSecond * Time.deltaTime / Time.timeScale);
             if (!enoughFocus)
                 ResumeTimeExcludePlayer();
         }

@@ -16,7 +16,12 @@ public class WindMode : ASpellMode
 
     public float TimeToGrab = 1;
 
-    void Start () {
+    [SerializeField]
+    private float castManaCost;
+
+    protected override void Start()
+    {
+        base.Start();
         grabbedLocation = Helpers.FindObjectInChildren(transform.parent.gameObject, "GrabbedLocation").transform;
 	}
 	
@@ -60,7 +65,7 @@ public class WindMode : ASpellMode
                     liftedObject.EndLevitate();
                     objectLifted = false;
                 }
-                else
+                else if(playerStatus.UseMana(castManaCost))
                 {
                     if (objectLifted)
                         liftedObject.EndLevitate();

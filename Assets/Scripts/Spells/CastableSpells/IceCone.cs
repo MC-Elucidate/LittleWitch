@@ -5,22 +5,17 @@ using UnityEngine;
 public class IceCone : MonoBehaviour {
 
     private List<FreezableObject> objectsInRange;
-
-    public float damageInterval = 0.25f;
-    private float timeSinceLastDamage = 0;
-	void Start () {
+	
+    void Start ()
+    {
         objectsInRange = new List<FreezableObject>();
 	}
 	
-	void Update () {
-        timeSinceLastDamage += Time.deltaTime;
-        if (timeSinceLastDamage >= damageInterval)
+	public void SpellEffectTick()
+    {
+        foreach(FreezableObject chemObj in objectsInRange)
         {
-            timeSinceLastDamage = 0;
-            foreach(FreezableObject chemObj in objectsInRange)
-            {
-                chemObj.TakeFrostDamage();
-            }
+            chemObj.TakeFrostDamage();
         }
 	}
 

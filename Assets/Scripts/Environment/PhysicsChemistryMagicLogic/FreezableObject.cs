@@ -20,9 +20,8 @@ public class FreezableObject : MonoBehaviour {
     [ReadOnly]
     [SerializeField]
     private float currentFrozenTime;
-
-    [SerializeField]
-    protected Material frozenMaterial;
+    
+    public Material frozenMaterial;
     private Material normalMaterial;
 
     [SerializeField]

@@ -1,16 +1,20 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(DamageIndicator))]
 public class EnemyBaseStatus : ChemistryObject {
 
     [SerializeField]
     protected float Health;
-    private AIState state;
+    public EAIState state { get; private set; }
 
     [SerializeField]
     private GameObject deathPoof;
 
+    private DamageIndicator damageIndicator;
+
     void Start () {
-        state = AIState.Idle;
+        state = EAIState.Idle;
+        damageIndicator = gameObject.GetComponent<DamageIndicator>();
     }
 
     void Update () {
@@ -50,11 +54,13 @@ public class EnemyBaseStatus : ChemistryObject {
         Health -= damage;
         if (Health <= 0)
             Die();
+        else if(damage > 0)
+            damageIndicator.TakeDamage();
     }
 
     protected virtual void Die()
     {
-        state = AIState.Dead;
+        state = EAIState.Dead;
         Destroy(Instantiate(deathPoof, transform.position, Quaternion.identity), 2f);
         Destroy(gameObject);
     }
@@ -63,50 +69,42 @@ public class EnemyBaseStatus : ChemistryObject {
     #region AIState
     public bool IsDead()
     {
-        return state == AIState.Dead;
+        return state == EAIState.Dead;
     }
 
     public bool IsAggro()
     {
-        return state == AIState.Aggro;
+        return state == EAIState.Aggro;
     }
 
     public bool IsIdle()
     {
-        return state == AIState.Idle;
+        return state == EAIState.Idle;
     }
 
     public void AggroOnPlayer()
     {
-        state = AIState.Aggro;
+        state = EAIState.Aggro;
     }
 
     public void BecomeIdle()
     {
-        state = AIState.Idle;
+        state = EAIState.Idle;
     }
 
     public void Freeze()
     {
-        state = AIState.Frozen;
+        state = EAIState.Frozen;
     }
 
     public void UnFreeze()
     {
-        state = AIState.Idle;
+        state = EAIState.Idle;
     }
 
     public bool IsFrozen()
     {
-        return state == AIState.Frozen;
+        return state == EAIState.Frozen;
     }
     #endregion
-
-    private enum AIState
-    {
-        Idle,
-        Aggro,
-        Dead,
-        Frozen
-    }
 }

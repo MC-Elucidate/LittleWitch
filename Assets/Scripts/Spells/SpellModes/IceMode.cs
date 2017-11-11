@@ -21,7 +21,7 @@ public class IceMode : ASpellMode {
     protected override void Start()
     {
         base.Start();
-        spellSource = transform.parent.FindChild("SpellSource");
+        spellSource = transform.parent.Find("SpellSource");
 	}
 
     void Update()
